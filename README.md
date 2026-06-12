@@ -23,6 +23,21 @@
 
 部署时只需要发布当前目录即可。
 
+### GitHub Pages 发布方式
+
+1. 在 GitHub 新建一个公开仓库，例如 `task-starter-prototype`。
+2. 将本地代码推送到仓库的 `main` 分支。
+3. 进入仓库 `Settings` -> `Pages`。
+4. 在 `Build and deployment` 中选择：
+   - Source: `Deploy from a branch`
+   - Branch: `main`
+   - Folder: `/root`
+5. 保存后等待 GitHub Pages 构建完成。
+
+发布完成后，访问地址通常是：
+
+`https://你的GitHub用户名.github.io/task-starter-prototype/`
+
 ## API 说明
 
 页面默认使用本地识别，不需要 API。
