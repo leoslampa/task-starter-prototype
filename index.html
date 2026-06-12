@@ -266,7 +266,7 @@
     .main {
       padding: 22px;
       display: grid;
-      grid-template-rows: auto minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr) auto;
       gap: 16px;
       min-width: 0;
     }
@@ -283,7 +283,6 @@
       gap: 8px;
     }
 
-    .copyright-note,
     .footer-note {
       color: var(--muted);
       font-size: 11px;
@@ -293,6 +292,8 @@
     .footer-note {
       border-top: 1px solid var(--soft-line);
       padding: 12px 4px 0;
+      display: grid;
+      gap: 8px;
     }
 
     .footer-note summary {
@@ -302,7 +303,15 @@
     }
 
     .footer-note p {
-      margin: 8px 0 0;
+      margin: 0;
+    }
+
+    .footer-note details[open] p {
+      margin-top: 6px;
+    }
+
+    .footer-copyright {
+      color: #475467;
     }
 
     .method {
@@ -485,6 +494,8 @@
       border-radius: 8px;
       padding: 13px 14px;
       color: #193963;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .risk {
@@ -493,6 +504,8 @@
       border-radius: 8px;
       padding: 13px 14px;
       color: #6b3b08;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     table {
@@ -508,6 +521,8 @@
       vertical-align: top;
       padding: 10px;
       font-size: 13px;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     th {
@@ -562,6 +577,8 @@
       border-radius: 8px;
       padding: 13px;
       color: #344054;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .checklist td:first-child {
@@ -748,14 +765,38 @@
       }
 
       .report {
-        overflow-x: auto;
+        overflow-x: hidden;
       }
     }
 
     @media (max-width: 640px) {
+      body {
+        font-size: 14px;
+      }
+
       .sidebar,
       .main {
-        padding: 16px;
+        padding: 12px;
+      }
+
+      .sidebar {
+        gap: 14px;
+      }
+
+      .brand h1 {
+        font-size: 17px;
+      }
+
+      .brand p,
+      .hint,
+      .ai-entry span {
+        font-size: 12px;
+      }
+
+      textarea,
+      input,
+      select {
+        padding: 9px 10px;
       }
 
       .topbar,
@@ -764,8 +805,148 @@
         flex-direction: column;
       }
 
-      table {
-        min-width: 760px;
+      .main {
+        gap: 12px;
+      }
+
+      .toolbar {
+        gap: 6px;
+      }
+
+      .tool-button {
+        min-height: 32px;
+        padding: 6px 8px;
+        font-size: 12px;
+      }
+
+      .report-body {
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .report-title h2 {
+        font-size: 18px;
+      }
+
+      .report-title p {
+        font-size: 12px;
+      }
+
+      .source-pill {
+        width: fit-content;
+        max-width: 100%;
+        font-size: 12px;
+        white-space: normal;
+      }
+
+      .section-title {
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+
+      .section-title small {
+        font-size: 11px;
+      }
+
+      .section-content {
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .understanding,
+      .risk,
+      .script-box,
+      .info-box {
+        padding: 11px;
+        font-size: 13px;
+      }
+
+      .info-box h4 {
+        font-size: 12px;
+      }
+
+      ul {
+        padding-left: 16px;
+      }
+
+      li + li {
+        margin-top: 4px;
+      }
+
+      table,
+      thead,
+      tbody,
+      tr,
+      th,
+      td {
+        display: block;
+        width: 100%;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        border: 1px solid var(--soft-line);
+        border-radius: 8px;
+        padding: 10px;
+        background: #fff;
+      }
+
+      tr + tr {
+        margin-top: 10px;
+      }
+
+      td {
+        border-bottom: 0;
+        padding: 0;
+        font-size: 12px;
+      }
+
+      td + td {
+        margin-top: 8px;
+      }
+
+      td::before {
+        content: attr(data-label);
+        display: block;
+        margin-bottom: 3px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .checklist tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .checklist td:first-child {
+        width: auto;
+      }
+
+      .checkbox-cell::before {
+        display: none;
+      }
+
+      .tag {
+        height: 22px;
+        font-size: 11px;
+      }
+
+      .modal {
+        padding: 14px;
+      }
+
+      .modal h2 {
+        font-size: 16px;
+      }
+
+      .modal-section {
+        font-size: 12px;
       }
     }
 
@@ -864,7 +1045,6 @@
 
     <main class="main">
       <div class="main-head">
-        <div class="copyright-note">版权声明：本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。</div>
         <div class="topbar">
           <div class="method" aria-label="方法">
             <span>三思</span>
@@ -890,11 +1070,13 @@
         </div>
       </section>
 
-      <details class="footer-note">
-        <summary>使用说明与隐私声明</summary>
-        <p>本应用采用本机账号模式，不需要注册，也不提供云端账号。你输入的账号名仅用于在当前浏览器中区分本机配置。本应用不提供云端存储。你的内容、配置、使用记录和 API Key 仅保存在当前浏览器中。我们不会收集、保存、分析或追踪你的任何使用行为、输入内容、生成结果或 API Key。API Key 由你自己提供，模型费用由你的模型服务商账户承担。请勿在公共设备上保存 API Key。</p>
-        <p>版权声明：本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。未经许可，不得复制、修改、分发、商用或二次发布。用户通过自有 API Key 调用模型生成的内容，由用户自行负责保存、使用和确认权利归属。</p>
-      </details>
+      <div class="footer-note">
+        <details>
+          <summary>使用说明与隐私声明</summary>
+          <p class="footer-usage">本应用采用本机账号模式，不需要注册，也不提供云端账号。你输入的账号名仅用于在当前浏览器中区分本机配置。本应用不提供云端存储。你的内容、配置、使用记录和 API Key 仅保存在当前浏览器中。我们不会收集、保存、分析或追踪你的任何使用行为、输入内容、生成结果或 API Key。API Key 由你自己提供，模型费用由你的模型服务商账户承担。请勿在公共设备上保存 API Key。</p>
+        </details>
+        <p class="footer-copyright">版权声明：本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。未经许可，不得复制、修改、分发、商用或二次发布。用户通过自有 API Key 调用模型生成的内容，由用户自行负责保存、使用和确认权利归属。</p>
+      </div>
     </main>
   </div>
 
@@ -922,8 +1104,7 @@
         <p>请勿在公共设备上保存 API Key。</p>
       </div>
       <div class="modal-section">
-        <h3>版权声明</h3>
-        <p>本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。未经许可，不得复制、修改、分发、商用或二次发布。</p>
+        <h3>API Key 提示</h3>
         <p>用户通过自有 API Key 调用模型生成的内容，由用户自行负责保存、使用和确认权利归属。</p>
       </div>
       <div class="modal-actions">
@@ -1055,11 +1236,12 @@
         print: "打印/导出",
         emptyTitle: "填入一句话任务，生成启动小报告",
         emptyText: "报告会重点给出任务拆解、3-5 个慎问问题，以及书面记录 checklist。",
-        copyrightTop: "版权声明：本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。",
         usageTitle: "使用说明与隐私声明",
         usageText: "本应用采用本机账号模式，不需要注册，也不提供云端账号。你输入的账号名仅用于在当前浏览器中区分本机配置。本应用不提供云端存储。你的内容、配置、使用记录和 API Key 仅保存在当前浏览器中。我们不会收集、保存、分析或追踪你的任何使用行为、输入内容、生成结果或 API Key。API Key 由你自己提供，模型费用由你的模型服务商账户承担。请勿在公共设备上保存 API Key。",
         copyrightTitle: "版权声明",
         copyrightText: "本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。未经许可，不得复制、修改、分发、商用或二次发布。用户通过自有 API Key 调用模型生成的内容，由用户自行负责保存、使用和确认权利归属。",
+        apiKeyNoticeTitle: "API Key 提示",
+        apiKeyNoticeText: "用户通过自有 API Key 调用模型生成的内容，由用户自行负责保存、使用和确认权利归属。",
         accountTitle: "本机账号与 API 配置",
         accountHint: "账号名仅用于当前浏览器区分本机配置；API 验证通过后，生成报告会自动在后台使用 AI。",
         accountLabel: "账号名称",
@@ -1138,11 +1320,12 @@
         print: "Print/Export",
         emptyTitle: "Enter a task to generate a kickoff report",
         emptyText: "The report will include a task breakdown, 3-5 careful questions, and a record checklist.",
-        copyrightTop: "Copyright: This app, including its interface, functional design, prompt templates, and related code, is copyrighted by the author.",
         usageTitle: "Usage and Privacy Notice",
         usageText: "This app uses a local account mode. It does not require registration or provide cloud accounts. The account name is only used to distinguish local configurations in the current browser. The app does not provide cloud storage. Your content, configuration, usage records, and API key are stored only in the current browser. We do not collect, store, analyze, or track your behavior, input, generated results, or API key. API keys are provided by you, and model usage fees are charged by your own model provider account. Do not save API keys on public devices.",
         copyrightTitle: "Copyright Notice",
         copyrightText: "The application, including its interface, functional design, prompt templates, and related code, is copyrighted by the author. Copying, modifying, distributing, commercial use, or republication without permission is not allowed. Content generated through a user’s own API key is the user’s responsibility to save, use, and confirm rights ownership.",
+        apiKeyNoticeTitle: "API Key Notice",
+        apiKeyNoticeText: "Content generated through a user’s own API key is the user’s responsibility to save, use, and confirm rights ownership.",
         accountTitle: "Local Account and API Settings",
         accountHint: "The account name is only used to distinguish local configurations in this browser. After API verification, report generation will use AI in the background.",
         accountLabel: "Account name",
@@ -1249,11 +1432,9 @@
       setText("#printBtn", t("print"));
       setText(".empty-state strong", t("emptyTitle"));
       setText(".empty-state span", t("emptyText"));
-      setText(".copyright-note", t("copyrightTop"));
       setText(".footer-note summary", t("usageTitle"));
-      const footerParagraphs = document.querySelectorAll(".footer-note p");
-      if (footerParagraphs[0]) footerParagraphs[0].textContent = t("usageText");
-      if (footerParagraphs[1]) footerParagraphs[1].textContent = t("copyrightText");
+      setText(".footer-usage", t("usageText"));
+      setText(".footer-copyright", `${t("copyrightTitle")}：${t("copyrightText")}`);
       setText("#termsTitle", t("usageTitle"));
       const modalSections = document.querySelectorAll("#termsModal .modal-section");
       if (modalSections[0]) {
@@ -1265,10 +1446,9 @@
         });
       }
       if (modalSections[1]) {
-        modalSections[1].querySelector("h3").textContent = t("copyrightTitle");
+        modalSections[1].querySelector("h3").textContent = t("apiKeyNoticeTitle");
         const ps = modalSections[1].querySelectorAll("p");
-        if (ps[0]) ps[0].textContent = t("copyrightText");
-        if (ps[1]) ps[1].hidden = true;
+        if (ps[0]) ps[0].textContent = t("apiKeyNoticeText");
       }
       setText("#cancelTermsBtn", t("cancelTerms"));
       setText("#agreeTermsBtn", t("agreeTerms"));
@@ -1720,11 +1900,11 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
           <tbody>
             ${questions.map(q => `
               <tr>
-                <td>${escapeHtml(q.item)}</td>
-                <td>${priorityTag(q.priority)}</td>
-                <td>${escapeHtml(q.target)}</td>
-                <td>${escapeHtml(q.wording)}</td>
-                <td>${upwardTag(q.upward)}</td>
+                <td data-label="${escapeHtml(t("questionItem"))}">${escapeHtml(q.item)}</td>
+                <td data-label="${escapeHtml(t("priority"))}">${priorityTag(q.priority)}</td>
+                <td data-label="${escapeHtml(t("target"))}">${escapeHtml(q.target)}</td>
+                <td data-label="${escapeHtml(t("wording"))}">${escapeHtml(q.wording)}</td>
+                <td data-label="${escapeHtml(t("upward"))}">${upwardTag(q.upward)}</td>
               </tr>
             `).join("")}
           </tbody>
@@ -1735,9 +1915,9 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
     function taskBreakdownTable(items) {
       const rows = (items || []).map(item => `
         <tr>
-          <td>${escapeHtml(item.flow || "")}</td>
-          <td>${escapeHtml(item.milestone || "")}</td>
-          <td>${escapeHtml(item.deliverable || "")}</td>
+          <td data-label="${escapeHtml(t("flow"))}">${escapeHtml(item.flow || "")}</td>
+          <td data-label="${escapeHtml(t("milestone"))}">${escapeHtml(item.milestone || "")}</td>
+          <td data-label="${escapeHtml(t("deliverable"))}">${escapeHtml(item.deliverable || "")}</td>
         </tr>
       `).join("");
 
@@ -1766,7 +1946,7 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
             <tbody>
               ${items.map(item => `
                 <tr>
-                  <td>${escapeHtml(item)}</td>
+                  <td data-label="${escapeHtml(t("checklistTitle"))}">${escapeHtml(item)}</td>
                   <td class="checkbox-cell"><input class="check-input" type="checkbox" aria-label="${escapeHtml(item)}"></td>
                 </tr>
               `).join("")}
@@ -2126,10 +2306,10 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
     });
     [taskInput, sourceInput, deadlineInput, peopleInput, worryInput].forEach(input => {
       input.addEventListener("input", () => {
-        document.querySelector("#generateBtn").textContent = "生成报告";
+        document.querySelector("#generateBtn").textContent = t("generate");
       });
       input.addEventListener("change", () => {
-        document.querySelector("#generateBtn").textContent = "生成报告";
+        document.querySelector("#generateBtn").textContent = t("generate");
       });
     });
     document.querySelector("#generateBtn").addEventListener("click", buildReport);
