@@ -1,0 +1,5 @@
+*.zip
+*二维码.png
+.DS_Store
+.vercel/
+node_modules/

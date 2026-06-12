@@ -1,0 +1,1506 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>一句话任务启动助手</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #1f2933;
+      --muted: #667085;
+      --line: #d9dee7;
+      --soft-line: #edf0f5;
+      --primary: #1f6feb;
+      --primary-dark: #1758bd;
+      --green: #0f766e;
+      --amber: #b45309;
+      --red: #b42318;
+      --blue-soft: #eaf2ff;
+      --green-soft: #e7f6f3;
+      --amber-soft: #fff4df;
+      --red-soft: #fff1f0;
+      --shadow: 0 16px 40px rgba(31, 41, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--soft-line);
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, #1f6feb 0%, #27a376 100%);
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      left: 9px;
+      right: 9px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 999px;
+    }
+
+    .brand-mark::before {
+      top: 12px;
+    }
+
+    .brand-mark::after {
+      top: 22px;
+      width: 12px;
+      right: auto;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .api-row {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .api-status {
+      min-height: 24px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .api-status.ok {
+      color: var(--green);
+      font-weight: 650;
+    }
+
+    .api-status.error {
+      color: var(--red);
+      font-weight: 650;
+    }
+
+    label {
+      font-size: 13px;
+      color: #344054;
+      font-weight: 650;
+    }
+
+    textarea,
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      padding: 10px 11px;
+      outline: none;
+      transition: border 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 96px;
+    }
+
+    textarea:focus,
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.13);
+    }
+
+    .optional {
+      border-top: 1px solid var(--soft-line);
+      padding-top: 16px;
+      display: grid;
+      gap: 13px;
+    }
+
+    .optional summary {
+      cursor: pointer;
+      color: #344054;
+      font-weight: 650;
+      font-size: 13px;
+      user-select: none;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .button {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      min-height: 42px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.12s ease, background 0.12s ease, border 0.12s ease;
+    }
+
+    .button:active {
+      transform: translateY(1px);
+    }
+
+    .button.primary {
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .button.primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .button.secondary {
+      color: #344054;
+      background: #fff;
+      border-color: var(--line);
+    }
+
+    .button.secondary:hover {
+      border-color: #b8c1cf;
+      background: #f8fafc;
+    }
+
+    .main {
+      padding: 22px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .method {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .method span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .method span::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tool-button {
+      min-height: 34px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #344054;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .tool-button:hover {
+      background: #f8fafc;
+    }
+
+    .report {
+      min-width: 0;
+      overflow: auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .empty-state {
+      min-height: 520px;
+      display: grid;
+      place-items: center;
+      padding: 30px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty-state strong {
+      display: block;
+      color: var(--text);
+      font-size: 19px;
+      margin-bottom: 8px;
+    }
+
+    .report-body {
+      padding: 22px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .report-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      border-bottom: 1px solid var(--soft-line);
+      padding-bottom: 16px;
+    }
+
+    .report-title h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .report-title p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .source-pill {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      color: #344054;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .section {
+      border: 1px solid var(--soft-line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .section-title {
+      margin: 0;
+      padding: 11px 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--soft-line);
+      font-size: 15px;
+      letter-spacing: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .section-title small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .section-content {
+      padding: 14px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .info-box {
+      border: 1px solid var(--soft-line);
+      border-radius: 8px;
+      padding: 12px;
+      min-width: 0;
+      background: #fff;
+    }
+
+    .info-box h4 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: #344054;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    li + li {
+      margin-top: 5px;
+    }
+
+    .understanding {
+      border-left: 4px solid var(--primary);
+      background: var(--blue-soft);
+      border-radius: 8px;
+      padding: 13px 14px;
+      color: #193963;
+    }
+
+    .risk {
+      border-left: 4px solid var(--amber);
+      background: var(--amber-soft);
+      border-radius: 8px;
+      padding: 13px 14px;
+      color: #6b3b08;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--soft-line);
+      text-align: left;
+      vertical-align: top;
+      padding: 10px;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #344054;
+      font-weight: 750;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .questions th:nth-child(1) { width: 29%; }
+    .questions th:nth-child(2) { width: 70px; }
+    .questions th:nth-child(3) { width: 118px; }
+    .questions th:nth-child(4) { width: 34%; }
+    .questions th:nth-child(5) { width: 104px; }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      height: 24px;
+      border-radius: 999px;
+      padding: 0 8px;
+      font-weight: 750;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .tag.high,
+    .tag.must {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .tag.medium,
+    .tag.suggest {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .tag.wait {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .script-box {
+      background: #f8fafc;
+      border: 1px solid var(--soft-line);
+      border-radius: 8px;
+      padding: 13px;
+      color: #344054;
+    }
+
+    .checklist td:first-child {
+      width: 72%;
+    }
+
+    .checkbox-cell {
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .check-input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+
+    .history-drawer {
+      position: fixed;
+      inset: 0;
+      background: rgba(31, 41, 51, 0.32);
+      z-index: 20;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .history-drawer[hidden] {
+      display: none;
+    }
+
+    .history-panel {
+      width: min(520px, 100%);
+      height: 100%;
+      background: #fff;
+      border-left: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .history-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--soft-line);
+      padding-bottom: 12px;
+    }
+
+    .history-head h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .history-list {
+      overflow: auto;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+    }
+
+    .history-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .history-item strong {
+      font-size: 14px;
+    }
+
+    .history-item span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .history-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: #1f2933;
+      color: #fff;
+      padding: 10px 13px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity 0.16s ease, transform 0.16s ease;
+      font-size: 13px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .actions {
+        margin-top: 0;
+      }
+
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .report {
+        overflow-x: auto;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .sidebar,
+      .main {
+        padding: 16px;
+      }
+
+      .topbar,
+      .report-header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      table {
+        min-width: 760px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .sidebar,
+      .topbar {
+        display: none;
+      }
+
+      .app-shell {
+        display: block;
+      }
+
+      .main {
+        padding: 0;
+      }
+
+      .report {
+        box-shadow: none;
+        border: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <h1>一句话任务启动助手</h1>
+          <p>三思，慎问，留痕</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="taskInput">一句话任务</label>
+        <textarea id="taskInput" placeholder="例如：下个月把新员工培训搞起来"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="sourceInput">任务是谁给的</label>
+        <select id="sourceInput">
+          <option>上级</option>
+          <option>业务同事</option>
+          <option>客户</option>
+          <option>跨部门负责人</option>
+          <option>其他需求方</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="deadlineInput">初次反馈时间</label>
+        <select id="deadlineInput">
+          <option>今天下班前</option>
+          <option selected>明天上午例会前</option>
+          <option>一周内</option>
+          <option>暂无明确时间</option>
+        </select>
+      </div>
+
+      <details class="optional">
+        <summary>补充背景</summary>
+        <div class="field">
+          <label for="peopleInput">可能涉及的人或部门</label>
+          <input id="peopleInput" placeholder="例如：人力、业务部门负责人">
+        </div>
+        <div class="field">
+          <label for="worryInput">当前最担心的问题</label>
+          <input id="worryInput" placeholder="例如：不确定是做一场培训还是长期机制">
+        </div>
+      </details>
+
+      <details class="optional" id="aiConfigDetails">
+        <summary>AI 配置</summary>
+        <p class="hint">默认使用本地识别；API 验证通过后，生成报告时会自动在后台使用 AI。</p>
+        <div class="field">
+          <label for="providerInput">AI 服务商</label>
+          <select id="providerInput">
+            <option value="chatgpt" selected>ChatGPT</option>
+            <option value="kimi">Kimi</option>
+            <option value="deepseek">DeepSeek</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="apiUrlInput">API 路径</label>
+          <input id="apiUrlInput" value="https://api.openai.com/v1/chat/completions" placeholder="例如：https://api.openai.com/v1/chat/completions">
+        </div>
+        <div class="field">
+          <label for="modelInput">模型</label>
+          <input id="modelInput" list="modelOptions" value="gpt-4.1-mini" placeholder="输入或选择模型">
+          <datalist id="modelOptions">
+            <option value="gpt-4.1-mini"></option>
+            <option value="gpt-4.1"></option>
+            <option value="gpt-4o-mini"></option>
+            <option value="gpt-4o"></option>
+            <option value="moonshot-v1-8k"></option>
+            <option value="moonshot-v1-32k"></option>
+            <option value="deepseek-chat"></option>
+            <option value="deepseek-reasoner"></option>
+          </datalist>
+        </div>
+        <div class="field">
+          <label for="apiKeyInput">API Key</label>
+          <input id="apiKeyInput" type="password" autocomplete="off" placeholder="仅本地原型测试使用">
+        </div>
+        <div class="api-row">
+          <button class="button secondary" id="verifyApiBtn" type="button">验证 API</button>
+          <span class="api-status" id="apiStatus">未验证，当前使用本地识别</span>
+        </div>
+      </details>
+
+      <div class="actions">
+        <button class="button secondary" id="historyBtn" type="button">历史记录</button>
+        <button class="button primary" id="generateBtn" type="button">生成报告</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="method" aria-label="方法">
+          <span>三思</span>
+          <span>慎问</span>
+          <span>留痕</span>
+        </div>
+        <div class="toolbar">
+          <button class="tool-button" id="copyScriptBtn" type="button">复制确认话术</button>
+          <button class="tool-button" id="copyReportBtn" type="button">复制报告</button>
+          <button class="tool-button" id="exportWordBtn" type="button">导出 Word</button>
+          <button class="tool-button" id="exportExcelBtn" type="button">导出 Excel</button>
+          <button class="tool-button" id="printBtn" type="button">打印/导出</button>
+        </div>
+      </div>
+
+      <section class="report" id="report">
+        <div class="empty-state">
+          <div>
+            <strong>填入一句话任务，生成启动小报告</strong>
+            <span>报告会重点给出任务拆解、3-5 个慎问问题，以及书面记录 checklist。</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="history-drawer" id="historyDrawer" hidden>
+    <div class="history-panel">
+      <div class="history-head">
+        <h2>历史记录</h2>
+        <button class="tool-button" id="closeHistoryBtn" type="button">关闭</button>
+      </div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </div>
+
+  <script>
+    const taskInput = document.querySelector("#taskInput");
+    const sourceInput = document.querySelector("#sourceInput");
+    const deadlineInput = document.querySelector("#deadlineInput");
+    const peopleInput = document.querySelector("#peopleInput");
+    const worryInput = document.querySelector("#worryInput");
+    const providerInput = document.querySelector("#providerInput");
+    const apiUrlInput = document.querySelector("#apiUrlInput");
+    const modelInput = document.querySelector("#modelInput");
+    const apiKeyInput = document.querySelector("#apiKeyInput");
+    const verifyApiBtn = document.querySelector("#verifyApiBtn");
+    const apiStatus = document.querySelector("#apiStatus");
+    const aiConfigDetails = document.querySelector("#aiConfigDetails");
+    const reportEl = document.querySelector("#report");
+    const toastEl = document.querySelector("#toast");
+    const historyDrawer = document.querySelector("#historyDrawer");
+    const historyList = document.querySelector("#historyList");
+
+    let lastReportText = "";
+    let lastScript = "";
+    let currentReport = null;
+    let aiVerified = false;
+
+    const aiPresets = {
+      chatgpt: {
+        apiUrl: "https://api.openai.com/v1/chat/completions",
+        model: "gpt-4.1-mini"
+      },
+      kimi: {
+        apiUrl: "https://api.moonshot.cn/v1/chat/completions",
+        model: "moonshot-v1-8k"
+      },
+      deepseek: {
+        apiUrl: "https://api.deepseek.com/chat/completions",
+        model: "deepseek-chat"
+      }
+    };
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function getTaskFocus(task) {
+      return task
+        .replace(/[。！？!?；;，,]+$/g, "")
+        .replace(/^(请|麻烦|帮我|帮忙|尽快|月底前|本周内|下个月|今天|明天|把)/, "")
+        .trim()
+        .slice(0, 28) || "本次任务";
+    }
+
+    function buildFallbackReport(task, source, deadline, context, people, worry) {
+      const focus = getTaskFocus(task);
+      return {
+        understanding: `我目前理解，负责人需要先围绕“${focus}”形成可确认的推进口径，重点是明确目标、交付物、时间节点和任务边界，再决定是否进入具体执行。`,
+        scope: [
+          `先聚焦“${focus}”本身的目的、交付物和确认口径`,
+          "暂不默认扩展到长期机制、完整体系或额外执行动作",
+          "暂不默认包含原话中没有明确提出的跨部门协调、预算或审批事项"
+        ],
+        deliverables: ["目标确认记录", "初步推进方案", "任务边界说明", "待确认问题清单"],
+        taskBreakdown: [
+          { flow: "目标确认", milestone: "形成可复述的任务目标", deliverable: "目标与交付物确认记录" },
+          { flow: "信息核查", milestone: "补齐影响判断的关键资料", deliverable: "资料清单和缺口说明" },
+          { flow: "方案成形", milestone: "形成可讨论的初步推进路径", deliverable: "简要推进方案" },
+          { flow: "确认留痕", milestone: "完成关键事项确认", deliverable: "确认记录和后续变更依据" }
+        ],
+        risk: {
+          title: worry ? "用户当前顾虑" : "最大偏航风险",
+          body: worry || `如果未确认“${focus}”背后的真实目标、交付物和边界，可能把需要先确认口径的任务误做成直接执行事项。`
+        },
+        questions: [
+          {
+            item: "确认本次任务最终希望达成的结果，避免一开始就偏离方向",
+            priority: "高",
+            target: `${source}/任务提出人`,
+            wording: `我先按“围绕${focus}先明确目标、交付物和边界”来理解，您看这个方向是否准确？`,
+            upward: "必须"
+          },
+          {
+            item: "确认最终需要交付什么，避免交付形式不符合预期",
+            priority: "高",
+            target: `${source}/任务提出人`,
+            wording: "最终您更希望看到的是一份方案、一个执行结果，还是一份用于决策的说明？",
+            upward: "必须"
+          },
+          {
+            item: "确认反馈或完成节点，避免把启动、方案和落地混为一谈",
+            priority: "高",
+            target: `${source}/任务提出人`,
+            wording: `关于时间，我理解是先在${deadline}给出初步反馈。后续是需要完成落地，还是先提交方案供您确认？`,
+            upward: "必须"
+          },
+          {
+            item: "确认任务边界，避免范围扩大到未明确要求的事项",
+            priority: "高",
+            target: `${source}/任务提出人`,
+            wording: `为保证先不偏题，我建议本次先聚焦“${focus}”的直接目标和确认口径，不默认扩展到未明确提出的事项，您看可以吗？`,
+            upward: "建议"
+          },
+          {
+            item: "确认协作支持，避免后续推进时才发现资源不足",
+            priority: "中",
+            target: people || "相关协作方",
+            wording: "我想先确认这个事项是否需要你们在资料、人员或时间上提供支持，方便我把推进安排做实。",
+            upward: "可暂缓"
+          }
+        ],
+        script: `我先按以下理解推进：本次先围绕“${focus}”明确目标、交付物、时间节点和任务边界。为避免方向偏差，我想确认三点：第一，本次最终希望达成什么结果；第二，最终希望看到什么交付物；第三，后续是需要直接落地，还是先提交方案供您确认。确认后我会整理一版简要推进方案。`,
+        checklist: []
+      };
+    }
+
+    function buildPrompt(input) {
+      return `你是一个资深项目启动顾问。请帮助项目负责人处理一句话任务。
+
+原则：
+1. 不要展示“先消化”部分。
+2. 不要做任务类型分类。
+3. 不要输出泛泛而谈的句子，例如“围绕任务形成一个可推进的初步结果”。
+4. 所有内容必须紧扣用户输入的原始任务。
+5. “任务边界”必须结合原始任务写，不要使用通用模板。
+6. “偏航风险”必须用“风险标题 + 风险说明”的格式。
+7. “慎问”只输出 3-5 个最值得问的问题，优先考虑向上确认必要性。
+8. 建议问法要尽量使用确认式表达，让对方容易回答。
+
+用户输入：
+- 一句话任务：${input.task}
+- 任务是谁给的：${input.source}
+- 初次反馈时间：${input.deadline}
+- 已知背景：${input.context || "无"}
+- 可能涉及的人或部门：${input.people || "无"}
+- 当前最担心的问题：${input.worry || "无"}
+
+请只返回 JSON，不要返回 Markdown，不要加解释。JSON 结构如下：
+{
+  "understanding": "项目负责人当前理解，一段话",
+  "scope": ["可能的任务边界1", "可能的任务边界2", "可能的任务边界3"],
+  "deliverables": ["初步交付物方向1", "初步交付物方向2"],
+  "taskBreakdown": [
+    {"flow": "主要流程", "milestone": "可能的里程碑", "deliverable": "对应交付物"}
+  ],
+  "risk": {"title": "最大偏航风险或用户当前顾虑", "body": "风险说明"},
+  "questions": [
+    {
+      "item": "待确认事项，融合问题和目的",
+      "priority": "高/中/低",
+      "target": "询问对象",
+      "wording": "建议问法",
+      "upward": "必须/建议/可暂缓/无需"
+    }
+  ],
+  "script": "对上确认话术，一段话",
+  "checklist": ["书面记录事项，必须包含原始任务原话和慎问环节的待确认事项"]
+}`;
+    }
+
+    async function callAi(input) {
+      return requestAi(buildPrompt(input));
+    }
+
+    async function validateAi() {
+      const content = await requestAi("请只返回 JSON：{\"ok\":true}");
+      return content && typeof content === "object";
+    }
+
+    async function requestAi(prompt) {
+      const apiUrl = apiUrlInput.value.trim();
+      const model = modelInput.value.trim();
+      const apiKey = apiKeyInput.value.trim();
+      if (!apiUrl || !model || !apiKey) {
+        throw new Error("缺少 AI 配置");
+      }
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: "你只输出可解析 JSON。" },
+            { role: "user", content: prompt }
+          ],
+          temperature: 0.3
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`AI 请求失败：${response.status}`);
+      }
+
+      const payload = await response.json();
+      const content = payload.choices?.[0]?.message?.content || "";
+      return parseAiJson(content);
+    }
+
+    function parseAiJson(content) {
+      const cleaned = content.trim().replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```$/i, "").trim();
+      return JSON.parse(cleaned);
+    }
+
+    function normalizeReport(aiReport, fallback, task = "") {
+      const report = aiReport || fallback;
+      const fallbackQuestions = fallback.questions;
+      const rawQuestions = Array.isArray(report.questions) && report.questions.length ? report.questions : fallbackQuestions;
+      const questions = rawQuestions.slice(0, 5).map((question, index) => ({
+        item: question.item || fallbackQuestions[index]?.item || "确认关键事项，避免方向偏差",
+        priority: question.priority || fallbackQuestions[index]?.priority || "中",
+        target: question.target || fallbackQuestions[index]?.target || "任务提出人",
+        wording: question.wording || fallbackQuestions[index]?.wording || "我先按这个理解推进，您看是否准确？",
+        upward: question.upward || fallbackQuestions[index]?.upward || "建议"
+      }));
+      return {
+        understanding: report.understanding || fallback.understanding,
+        scope: Array.isArray(report.scope) && report.scope.length ? report.scope.slice(0, 4) : fallback.scope,
+        deliverables: Array.isArray(report.deliverables) && report.deliverables.length ? report.deliverables.slice(0, 4) : fallback.deliverables,
+        taskBreakdown: Array.isArray(report.taskBreakdown) && report.taskBreakdown.length ? report.taskBreakdown.slice(0, 5) : fallback.taskBreakdown,
+        risk: report.risk && report.risk.body ? report.risk : fallback.risk,
+        questions,
+        script: report.script || fallback.script,
+        checklist: buildRecordChecklist(report.checklist, questions, task)
+      };
+    }
+
+    function buildRecordChecklist(aiChecklist, questions, task = "") {
+      const base = [task ? `原始任务原话：${task}` : "原始任务原话"];
+      const questionItems = questions.map(question => `记录待确认事项：${question.item}`);
+      const aiItems = Array.isArray(aiChecklist) ? aiChecklist : [];
+      const items = base.concat(questionItems, aiItems);
+      return [...new Set(items)].slice(0, 8);
+    }
+
+    function urgencyText(deadline) {
+      if (deadline.includes("今天")) return "反馈时限较近，应只保留最关键的向上确认问题。";
+      if (deadline.includes("明天")) return "反馈时限较近，应先形成简洁确认方案。";
+      if (deadline.includes("一周")) return "有一定消化时间，可以先做基础核查再集中提问。";
+      return "反馈时限未明确，需要先确认是否存在硬性时间节点。";
+    }
+
+    function sourceTone(source) {
+      if (source.includes("上级")) return "任务来自上级，建议优先使用确认式问法，减少开放式追问。";
+      if (source.includes("客户")) return "任务来自客户，建议注意需求边界和书面确认。";
+      if (source.includes("业务")) return "任务来自业务同事，建议先确认业务目标和验收方式。";
+      if (source.includes("跨部门")) return "任务来自跨部门负责人，建议明确责任边界和协作资源。";
+      return "任务来源需要进一步明确，建议保留原话并形成书面确认。";
+    }
+
+    async function buildReport() {
+      const task = taskInput.value.trim();
+      if (!task) {
+        showToast("请先填写一句话任务");
+        taskInput.focus();
+        return;
+      }
+
+      const source = sourceInput.value;
+      const deadline = deadlineInput.value;
+      const context = "";
+      const people = peopleInput.value.trim();
+      const worry = worryInput.value.trim();
+      const input = { task, source, deadline, context, people, worry };
+      const fallback = buildFallbackReport(task, source, deadline, context, people, worry);
+
+      let aiReport = null;
+      const generateBtn = document.querySelector("#generateBtn");
+      generateBtn.disabled = true;
+      generateBtn.textContent = "生成中";
+
+      if (aiVerified) {
+        try {
+          aiReport = await callAi(input);
+        } catch (error) {
+          aiVerified = false;
+          setApiStatus("API 调用失败，已切回本地识别", "error");
+          showToast("AI 调用失败，已使用本地识别结果");
+        }
+      }
+      generateBtn.disabled = false;
+      generateBtn.textContent = "生成报告";
+
+      const report = normalizeReport(aiReport, fallback, task);
+      const { understanding, scope, deliverables, taskBreakdown, risk, questions, script, checklist } = report;
+      lastScript = script;
+
+      lastReportText = makePlainText({
+        task, source, deadline,
+        understanding, scope, deliverables, taskBreakdown, risk, questions, script, checklist
+      });
+      currentReport = { task, source, deadline, createdAt: new Date().toISOString(), ...report, plainText: lastReportText };
+      saveHistory(currentReport);
+
+      reportEl.innerHTML = `
+        <div class="report-body">
+          <header class="report-header">
+            <div class="report-title">
+              <h2>任务启动小报告</h2>
+              <p>${escapeHtml(task)}</p>
+            </div>
+            <div class="source-pill">${escapeHtml(source)} · ${escapeHtml(deadline)}</div>
+          </header>
+
+          <section class="section">
+            <h3 class="section-title">三思 <small>形成待确认理解</small></h3>
+            <div class="section-content">
+              <div class="understanding">${escapeHtml(understanding)}</div>
+              <div class="grid-3">
+                ${listBox("可能的任务边界", scope)}
+                ${listBox("初步交付物方向", deliverables)}
+                <div class="info-box">
+                  <h4>${escapeHtml(risk.title)}</h4>
+                  <div class="risk">${escapeHtml(risk.body)}</div>
+                </div>
+              </div>
+              ${taskBreakdownTable(taskBreakdown)}
+            </div>
+          </section>
+
+          <section class="section">
+            <h3 class="section-title">慎问 <small>少问，问准，留痕</small></h3>
+            <div class="section-content">
+              ${questionTable(questions)}
+              <div>
+                <h4>对上确认话术</h4>
+                <div class="script-box">${escapeHtml(script)}</div>
+              </div>
+              ${checklistTable(checklist)}
+            </div>
+          </section>
+        </div>
+      `;
+      generateBtn.textContent = "已生成";
+    }
+
+    function listBox(title, items) {
+      return `
+        <div class="info-box">
+          <h4>${escapeHtml(title)}</h4>
+          <ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </div>
+      `;
+    }
+
+    function questionTable(questions) {
+      return `
+        <table class="questions">
+          <thead>
+            <tr>
+              <th>待确认事项</th>
+              <th>优先级</th>
+              <th>询问对象</th>
+              <th>建议问法</th>
+              <th>向上确认的必要性</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${questions.map(q => `
+              <tr>
+                <td>${escapeHtml(q.item)}</td>
+                <td>${priorityTag(q.priority)}</td>
+                <td>${escapeHtml(q.target)}</td>
+                <td>${escapeHtml(q.wording)}</td>
+                <td>${upwardTag(q.upward)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function taskBreakdownTable(items) {
+      const rows = (items || []).map(item => `
+        <tr>
+          <td>${escapeHtml(item.flow || "")}</td>
+          <td>${escapeHtml(item.milestone || "")}</td>
+          <td>${escapeHtml(item.deliverable || "")}</td>
+        </tr>
+      `).join("");
+
+      return `
+        <div>
+          <h4>任务拆解</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>主要流程</th>
+                <th>可能的里程碑</th>
+                <th>对应交付物</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function checklistTable(items) {
+      return `
+        <div>
+          <h4>书面记录 Checklist</h4>
+          <table class="checklist">
+            <tbody>
+              ${items.map(item => `
+                <tr>
+                  <td>${escapeHtml(item)}</td>
+                  <td class="checkbox-cell"><input class="check-input" type="checkbox" aria-label="${escapeHtml(item)}"></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function priorityTag(value) {
+      const className = value === "高" ? "high" : "medium";
+      return `<span class="tag ${className}">${value}</span>`;
+    }
+
+    function upwardTag(value) {
+      const map = { "必须": "must", "建议": "suggest", "可暂缓": "wait", "无需": "wait" };
+      return `<span class="tag ${map[value] || "wait"}">${value}</span>`;
+    }
+
+    function makePlainText(data) {
+      const questionText = data.questions.map((q, index) =>
+        `${index + 1}. ${q.item}\n优先级：${q.priority}\n询问对象：${q.target}\n建议问法：${q.wording}\n向上确认的必要性：${q.upward}`
+      ).join("\n\n");
+      const breakdownText = (data.taskBreakdown || []).map((item, index) =>
+        `${index + 1}. ${item.flow || ""}｜${item.milestone || ""}｜${item.deliverable || ""}`
+      ).join("\n");
+
+      return [
+        "任务启动小报告",
+        "",
+        `原始任务：${data.task}`,
+        `任务来源：${data.source}`,
+        `反馈时限：${data.deadline}`,
+        "",
+        "一、三思",
+        `项目负责人当前理解：${data.understanding}`,
+        `可能的任务边界：\n${data.scope.map(item => `- ${item}`).join("\n")}`,
+        `初步交付物方向：\n${(data.deliverables || []).map(item => `- ${item}`).join("\n")}`,
+        `任务拆解：\n${breakdownText}`,
+        `${data.risk.title}：${data.risk.body}`,
+        "",
+        "二、慎问",
+        questionText,
+        "",
+        `对上确认话术：${data.script}`,
+        "",
+        `书面记录 Checklist：\n${data.checklist.map(item => `- ${item}`).join("\n")}`
+      ].join("\n");
+    }
+
+    async function copyText(text, emptyMessage) {
+      if (!text) {
+        showToast(emptyMessage);
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("已复制");
+      } catch (error) {
+        showToast("复制失败，请手动选择文本");
+      }
+    }
+
+    function showToast(message) {
+      toastEl.textContent = message;
+      toastEl.classList.add("show");
+      window.setTimeout(() => toastEl.classList.remove("show"), 1800);
+    }
+
+    function setApiStatus(message, type = "") {
+      apiStatus.textContent = message;
+      apiStatus.className = `api-status ${type}`.trim();
+    }
+
+    function resetApiVerification() {
+      aiVerified = false;
+      setApiStatus("未验证，当前使用本地识别");
+    }
+
+    function applyProviderPreset(provider) {
+      const preset = aiPresets[provider];
+      if (!preset) return;
+      apiUrlInput.value = preset.apiUrl;
+      modelInput.value = preset.model;
+      resetApiVerification();
+    }
+
+    async function verifyApi() {
+      verifyApiBtn.disabled = true;
+      verifyApiBtn.textContent = "验证中";
+      setApiStatus("正在验证 API...");
+
+      try {
+        await validateAi();
+        aiVerified = true;
+        setApiStatus(`已验证：${providerInput.options[providerInput.selectedIndex].text} / ${modelInput.value.trim()}`, "ok");
+        aiConfigDetails.open = false;
+        showToast("API 验证通过");
+      } catch (error) {
+        aiVerified = false;
+        setApiStatus("验证失败，当前使用本地识别", "error");
+        showToast("API 验证失败");
+      } finally {
+        verifyApiBtn.disabled = false;
+        verifyApiBtn.textContent = "验证 API";
+      }
+    }
+
+    function getHistory() {
+      try {
+        return JSON.parse(localStorage.getItem("task-start-history") || "[]");
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveHistory(report) {
+      const history = getHistory();
+      const next = [report, ...history].slice(0, 20);
+      localStorage.setItem("task-start-history", JSON.stringify(next));
+    }
+
+    function openHistory() {
+      const history = getHistory();
+      historyDrawer.hidden = false;
+      if (!history.length) {
+        historyList.innerHTML = `<div class="empty-state"><div><strong>暂无历史记录</strong><span>生成过的报告会保存在本机浏览器中。</span></div></div>`;
+        return;
+      }
+
+      historyList.innerHTML = history.map((item, index) => `
+        <div class="history-item">
+          <strong>${escapeHtml(item.task)}</strong>
+          <span>${escapeHtml(new Date(item.createdAt).toLocaleString())} · ${escapeHtml(item.source)} · ${escapeHtml(item.deadline)}</span>
+          <div class="history-actions">
+            <button class="tool-button" type="button" data-history-load="${index}">查看报告</button>
+            <button class="tool-button" type="button" data-history-copy="${index}">复制报告</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function closeHistory() {
+      historyDrawer.hidden = true;
+    }
+
+    function loadHistoryReport(index) {
+      const report = getHistory()[index];
+      if (!report) return;
+      taskInput.value = report.task || "";
+      sourceInput.value = report.source || "上级";
+      deadlineInput.value = report.deadline || "明天上午例会前";
+      currentReport = report;
+      lastScript = report.script || "";
+      lastReportText = report.plainText || "";
+      renderReport(report);
+      closeHistory();
+      document.querySelector("#generateBtn").textContent = "已生成";
+    }
+
+    function renderReport(report) {
+      const { task, source, deadline, understanding, scope, deliverables, taskBreakdown, risk, questions, script, checklist } = report;
+      reportEl.innerHTML = `
+        <div class="report-body">
+          <header class="report-header">
+            <div class="report-title">
+              <h2>任务启动小报告</h2>
+              <p>${escapeHtml(task)}</p>
+            </div>
+            <div class="source-pill">${escapeHtml(source)} · ${escapeHtml(deadline)}</div>
+          </header>
+
+          <section class="section">
+            <h3 class="section-title">三思 <small>形成待确认理解</small></h3>
+            <div class="section-content">
+              <div class="understanding">${escapeHtml(understanding)}</div>
+              <div class="grid-3">
+                ${listBox("可能的任务边界", scope)}
+                ${listBox("初步交付物方向", deliverables)}
+                <div class="info-box">
+                  <h4>${escapeHtml(risk.title)}</h4>
+                  <div class="risk">${escapeHtml(risk.body)}</div>
+                </div>
+              </div>
+              ${taskBreakdownTable(taskBreakdown)}
+            </div>
+          </section>
+
+          <section class="section">
+            <h3 class="section-title">慎问 <small>少问，问准，留痕</small></h3>
+            <div class="section-content">
+              ${questionTable(questions)}
+              <div>
+                <h4>对上确认话术</h4>
+                <div class="script-box">${escapeHtml(script)}</div>
+              </div>
+              ${checklistTable(checklist)}
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    function downloadFile(filename, mimeType, content) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportWord() {
+      if (!currentReport) {
+        showToast("请先生成报告");
+        return;
+      }
+      const html = `<!doctype html><html><head><meta charset="utf-8"><title>任务启动小报告</title></head><body><pre style="font-family:Arial,'Microsoft YaHei',sans-serif;white-space:pre-wrap;">${escapeHtml(currentReport.plainText || lastReportText)}</pre></body></html>`;
+      downloadFile(`任务启动小报告-${safeFilename(currentReport.task)}.doc`, "application/msword;charset=utf-8", html);
+    }
+
+    function exportExcel() {
+      if (!currentReport) {
+        showToast("请先生成报告");
+        return;
+      }
+      const rows = [
+        ["模块", "内容1", "内容2", "内容3"],
+        ["原始任务", currentReport.task, "", ""],
+        ["任务来源", currentReport.source, "", ""],
+        ["反馈时限", currentReport.deadline, "", ""],
+        ["项目负责人当前理解", currentReport.understanding, "", ""],
+        ...currentReport.scope.map(item => ["任务边界", item, "", ""]),
+        ...currentReport.deliverables.map(item => ["初步交付物", item, "", ""]),
+        ...currentReport.taskBreakdown.map(item => ["任务拆解", item.flow || "", item.milestone || "", item.deliverable || ""]),
+        [currentReport.risk.title, currentReport.risk.body, "", ""],
+        ...currentReport.questions.map(item => ["慎问", item.item, item.target, item.wording]),
+        ["对上确认话术", currentReport.script, "", ""],
+        ...currentReport.checklist.map(item => ["书面记录", item, "", ""])
+      ];
+      const csv = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(",")).join("\n");
+      downloadFile(`任务启动小报告-${safeFilename(currentReport.task)}.csv`, "text/csv;charset=utf-8", `\ufeff${csv}`);
+    }
+
+    function safeFilename(value) {
+      return String(value).replace(/[\\/:*?"<>|]/g, "").slice(0, 24) || "报告";
+    }
+
+    providerInput.addEventListener("change", () => applyProviderPreset(providerInput.value));
+    apiUrlInput.addEventListener("input", resetApiVerification);
+    modelInput.addEventListener("input", resetApiVerification);
+    apiKeyInput.addEventListener("input", resetApiVerification);
+    verifyApiBtn.addEventListener("click", verifyApi);
+    [taskInput, sourceInput, deadlineInput, peopleInput, worryInput].forEach(input => {
+      input.addEventListener("input", () => {
+        document.querySelector("#generateBtn").textContent = "生成报告";
+      });
+      input.addEventListener("change", () => {
+        document.querySelector("#generateBtn").textContent = "生成报告";
+      });
+    });
+    document.querySelector("#generateBtn").addEventListener("click", buildReport);
+    document.querySelector("#historyBtn").addEventListener("click", openHistory);
+    document.querySelector("#closeHistoryBtn").addEventListener("click", closeHistory);
+    historyDrawer.addEventListener("click", event => {
+      if (event.target === historyDrawer) closeHistory();
+    });
+    historyList.addEventListener("click", event => {
+      const loadIndex = event.target.getAttribute("data-history-load");
+      const copyIndex = event.target.getAttribute("data-history-copy");
+      if (loadIndex !== null) loadHistoryReport(Number(loadIndex));
+      if (copyIndex !== null) copyText(getHistory()[Number(copyIndex)]?.plainText || "", "没有可复制的报告");
+    });
+    document.querySelector("#copyScriptBtn").addEventListener("click", () => copyText(lastScript, "请先生成报告"));
+    document.querySelector("#copyReportBtn").addEventListener("click", () => copyText(lastReportText, "请先生成报告"));
+    document.querySelector("#exportWordBtn").addEventListener("click", exportWord);
+    document.querySelector("#exportExcelBtn").addEventListener("click", exportExcel);
+    document.querySelector("#printBtn").addEventListener("click", () => window.print());
+  </script>
+</body>
+</html>
