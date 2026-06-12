@@ -1,5 +1,7 @@
 # 一句话任务启动助手
 
+[English](#task-starter-assistant)
+
 一个面向项目负责人的静态网页工具，用于把一句模糊任务快速转成任务启动小报告。
 
 核心流程：
@@ -70,3 +72,80 @@
 本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。未经许可，不得复制、修改、分发、商用或二次发布。
 
 用户通过自有 API Key 调用模型生成的内容，由用户自行负责保存、使用和确认权利归属。
+
+---
+
+# Task Starter Assistant
+
+[中文](#一句话任务启动助手)
+
+Task Starter Assistant is a static web tool for project owners who receive vague or one-sentence assignments. It helps turn unclear tasks into an initial project kickoff report.
+
+Core workflow:
+
+- Think: form the project owner’s current understanding, task boundaries, key risks, and task breakdown.
+- Ask carefully: generate 3-5 key confirmation items, target audiences, and suggested wording.
+- Keep records: record the original task wording and key confirmation items.
+
+## Local Use
+
+Open `index.html` directly in a browser to try it locally.
+
+## Public Deployment
+
+This is a pure frontend static site. It can be deployed to:
+
+- Vercel
+- Netlify
+- Cloudflare Pages
+- GitHub Pages
+
+Deploying the current directory is enough.
+
+### GitHub Pages
+
+1. Create a public GitHub repository, for example `task-starter-prototype`.
+2. Push the local code to the `main` branch.
+3. Open `Settings` -> `Pages` in the repository.
+4. Under `Build and deployment`, choose:
+   - Source: `Deploy from a branch`
+   - Branch: `main`
+   - Folder: `/root`
+5. Save and wait for GitHub Pages to finish building.
+
+The public URL is usually:
+
+`https://your-github-username.github.io/task-starter-prototype/`
+
+## API
+
+The app uses local recognition by default and does not require an API.
+
+To enable AI:
+
+1. Click `Enable AI`.
+2. Read and agree to the Usage and Privacy Notice.
+3. Enter a local account name.
+4. Choose ChatGPT, Kimi, or DeepSeek.
+5. Enter your own API key.
+6. Click `Verify API`.
+
+After verification, report generation will use AI in the background.
+
+## Privacy
+
+- The app uses a local account mode. It does not require registration or provide cloud accounts.
+- The account name is only used to distinguish local configurations in the current browser.
+- History is stored only in the user’s browser `localStorage`.
+- The static site itself has no backend database.
+- Content, configuration, usage records, and API keys are stored only in the current browser.
+- The app does not collect, store, analyze, or track usage behavior, input content, generated results, or API keys.
+- If AI is enabled, task content will be sent to the model provider configured by the user.
+- API keys are provided by users themselves, and model usage fees are charged by their own model service accounts.
+- Do not save API keys on public devices.
+
+## Copyright
+
+The application, including its interface, functional design, prompt templates, and related code, is copyrighted by the author. Copying, modifying, distributing, commercial use, or republication without permission is not allowed.
+
+Content generated through a user’s own API key is the user’s responsibility to save, use, and confirm rights ownership.
