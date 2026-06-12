@@ -116,6 +116,20 @@
       gap: 7px;
     }
 
+    .language-row {
+      display: grid;
+      grid-template-columns: 1fr 132px;
+      gap: 10px;
+      align-items: center;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--soft-line);
+    }
+
+    .language-row span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     .hint {
       margin: 0;
       color: var(--muted);
@@ -791,6 +805,14 @@
         </div>
       </div>
 
+      <div class="language-row">
+        <span id="languageHint">界面语言</span>
+        <select id="languageInput" aria-label="Language">
+          <option value="zh" selected>中文</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
       <div class="field">
         <label for="taskInput">一句话任务</label>
         <textarea id="taskInput" placeholder="例如：下个月把新员工培训搞起来"></textarea>
@@ -961,6 +983,7 @@
 
   <script>
     const taskInput = document.querySelector("#taskInput");
+    const languageInput = document.querySelector("#languageInput");
     const sourceInput = document.querySelector("#sourceInput");
     const deadlineInput = document.querySelector("#deadlineInput");
     const peopleInput = document.querySelector("#peopleInput");
@@ -985,6 +1008,7 @@
     let currentReport = null;
     let aiVerified = false;
     let activeAccountName = "";
+    let currentLang = localStorage.getItem("task-starter-language") || "zh";
 
     const aiPresets = {
       chatgpt: {
@@ -1000,6 +1024,269 @@
         model: "deepseek-chat"
       }
     };
+
+    const i18n = {
+      zh: {
+        appTitle: "一句话任务启动助手",
+        appSubtitle: "三思，慎问，留痕",
+        languageHint: "界面语言",
+        taskLabel: "一句话任务",
+        taskPlaceholder: "例如：下个月把新员工培训搞起来",
+        sourceLabel: "任务是谁给的",
+        deadlineLabel: "初次反馈时间",
+        optionalSummary: "补充背景",
+        peopleLabel: "可能涉及的人或部门",
+        peoplePlaceholder: "例如：人力、业务部门负责人",
+        worryLabel: "当前最担心的问题",
+        worryPlaceholder: "例如：不确定是做一场培训还是长期机制",
+        localRuntime: "当前使用：本地识别",
+        enableAi: "启用 AI",
+        history: "历史记录",
+        generate: "生成报告",
+        generated: "已生成",
+        generating: "生成中",
+        methodThink: "三思",
+        methodAsk: "慎问",
+        methodRecord: "留痕",
+        copyScript: "复制确认话术",
+        copyReport: "复制报告",
+        exportWord: "导出 Word",
+        exportExcel: "导出 Excel",
+        print: "打印/导出",
+        emptyTitle: "填入一句话任务，生成启动小报告",
+        emptyText: "报告会重点给出任务拆解、3-5 个慎问问题，以及书面记录 checklist。",
+        copyrightTop: "版权声明：本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。",
+        usageTitle: "使用说明与隐私声明",
+        usageText: "本应用采用本机账号模式，不需要注册，也不提供云端账号。你输入的账号名仅用于在当前浏览器中区分本机配置。本应用不提供云端存储。你的内容、配置、使用记录和 API Key 仅保存在当前浏览器中。我们不会收集、保存、分析或追踪你的任何使用行为、输入内容、生成结果或 API Key。API Key 由你自己提供，模型费用由你的模型服务商账户承担。请勿在公共设备上保存 API Key。",
+        copyrightTitle: "版权声明",
+        copyrightText: "本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。未经许可，不得复制、修改、分发、商用或二次发布。用户通过自有 API Key 调用模型生成的内容，由用户自行负责保存、使用和确认权利归属。",
+        accountTitle: "本机账号与 API 配置",
+        accountHint: "账号名仅用于当前浏览器区分本机配置；API 验证通过后，生成报告会自动在后台使用 AI。",
+        accountLabel: "账号名称",
+        accountPlaceholder: "例如：我的工作电脑",
+        providerLabel: "AI 服务商",
+        apiUrlLabel: "API 路径",
+        modelLabel: "模型",
+        apiKeyLabel: "API Key",
+        verifyApi: "验证 API",
+        verifying: "验证中",
+        unverified: "未验证，当前使用本地识别",
+        verifyOk: "API 验证通过",
+        verifyFail: "API 验证失败",
+        close: "关闭",
+        cancelTerms: "暂不启用",
+        agreeTerms: "同意并继续",
+        reportTitle: "任务启动小报告",
+        thinkSmall: "形成待确认理解",
+        askSmall: "少问，问准，留痕",
+        scopeTitle: "可能的任务边界",
+        deliverableTitle: "初步交付物方向",
+        breakdownTitle: "任务拆解",
+        flow: "主要流程",
+        milestone: "可能的里程碑",
+        deliverable: "对应交付物",
+        questionItem: "待确认事项",
+        priority: "优先级",
+        target: "询问对象",
+        wording: "建议问法",
+        upward: "向上确认的必要性",
+        scriptTitle: "对上确认话术",
+        checklistTitle: "书面记录 Checklist",
+        noHistoryTitle: "暂无历史记录",
+        noHistoryText: "生成过的报告会保存在本机浏览器中。",
+        viewReport: "查看报告",
+        copyHistory: "复制报告",
+        copied: "已复制",
+        copyFail: "复制失败，请手动选择文本",
+        needTask: "请先填写一句话任务",
+        needReport: "请先生成报告",
+        needAccount: "请先填写账号名称",
+        aiCallFail: "AI 调用失败，已使用本地识别结果",
+        aiStatusFailed: "API 调用失败，已切回本地识别",
+        verifiedStatus: "已验证",
+        activeAi: "当前使用",
+        activeLocal: "当前使用：本地识别",
+        accountUnverified: "当前账号",
+        accountUnverifiedSuffix: "（未验证）"
+      },
+      en: {
+        appTitle: "Task Starter Assistant",
+        appSubtitle: "Think, Ask, Record",
+        languageHint: "Language",
+        taskLabel: "One-sentence task",
+        taskPlaceholder: "Example: Launch onboarding training next month",
+        sourceLabel: "Who assigned it",
+        deadlineLabel: "First response time",
+        optionalSummary: "Additional context",
+        peopleLabel: "Possible people or teams involved",
+        peoplePlaceholder: "Example: HR, department leads",
+        worryLabel: "Biggest concern",
+        worryPlaceholder: "Example: Not sure whether this means one session or a long-term mechanism",
+        localRuntime: "Current mode: Local recognition",
+        enableAi: "Enable AI",
+        history: "History",
+        generate: "Generate report",
+        generated: "Generated",
+        generating: "Generating",
+        methodThink: "Think",
+        methodAsk: "Ask",
+        methodRecord: "Record",
+        copyScript: "Copy wording",
+        copyReport: "Copy report",
+        exportWord: "Export Word",
+        exportExcel: "Export Excel",
+        print: "Print/Export",
+        emptyTitle: "Enter a task to generate a kickoff report",
+        emptyText: "The report will include a task breakdown, 3-5 careful questions, and a record checklist.",
+        copyrightTop: "Copyright: This app, including its interface, functional design, prompt templates, and related code, is copyrighted by the author.",
+        usageTitle: "Usage and Privacy Notice",
+        usageText: "This app uses a local account mode. It does not require registration or provide cloud accounts. The account name is only used to distinguish local configurations in the current browser. The app does not provide cloud storage. Your content, configuration, usage records, and API key are stored only in the current browser. We do not collect, store, analyze, or track your behavior, input, generated results, or API key. API keys are provided by you, and model usage fees are charged by your own model provider account. Do not save API keys on public devices.",
+        copyrightTitle: "Copyright Notice",
+        copyrightText: "The application, including its interface, functional design, prompt templates, and related code, is copyrighted by the author. Copying, modifying, distributing, commercial use, or republication without permission is not allowed. Content generated through a user’s own API key is the user’s responsibility to save, use, and confirm rights ownership.",
+        accountTitle: "Local Account and API Settings",
+        accountHint: "The account name is only used to distinguish local configurations in this browser. After API verification, report generation will use AI in the background.",
+        accountLabel: "Account name",
+        accountPlaceholder: "Example: My work laptop",
+        providerLabel: "AI provider",
+        apiUrlLabel: "API URL",
+        modelLabel: "Model",
+        apiKeyLabel: "API Key",
+        verifyApi: "Verify API",
+        verifying: "Verifying",
+        unverified: "Not verified. Using local recognition.",
+        verifyOk: "API verified",
+        verifyFail: "API verification failed",
+        close: "Close",
+        cancelTerms: "Not now",
+        agreeTerms: "Agree and continue",
+        reportTitle: "Task Kickoff Report",
+        thinkSmall: "Draft an understanding to confirm",
+        askSmall: "Ask less, ask better, keep records",
+        scopeTitle: "Possible Task Boundaries",
+        deliverableTitle: "Initial Deliverable Direction",
+        breakdownTitle: "Task Breakdown",
+        flow: "Main Flow",
+        milestone: "Possible Milestone",
+        deliverable: "Deliverable",
+        questionItem: "Confirmation Item",
+        priority: "Priority",
+        target: "Who to Ask",
+        wording: "Suggested Wording",
+        upward: "Need for Upward Confirmation",
+        scriptTitle: "Upward Confirmation Wording",
+        checklistTitle: "Record Checklist",
+        noHistoryTitle: "No history yet",
+        noHistoryText: "Generated reports are stored in this browser.",
+        viewReport: "View report",
+        copyHistory: "Copy report",
+        copied: "Copied",
+        copyFail: "Copy failed. Please select the text manually.",
+        needTask: "Please enter a task first",
+        needReport: "Please generate a report first",
+        needAccount: "Please enter an account name first",
+        aiCallFail: "AI call failed. Local result was used.",
+        aiStatusFailed: "API call failed. Switched back to local recognition.",
+        verifiedStatus: "Verified",
+        activeAi: "Current mode",
+        activeLocal: "Current mode: Local recognition",
+        accountUnverified: "Current account",
+        accountUnverifiedSuffix: " (not verified)"
+      }
+    };
+
+    function t(key) {
+      return i18n[currentLang][key] || i18n.zh[key] || key;
+    }
+
+    function labelFor(id, text) {
+      const label = document.querySelector(`label[for="${id}"]`);
+      if (label) label.textContent = text;
+    }
+
+    function setText(selector, text) {
+      const node = document.querySelector(selector);
+      if (node) node.textContent = text;
+    }
+
+    function updateLanguage() {
+      document.documentElement.lang = currentLang === "en" ? "en" : "zh-CN";
+      document.title = t("appTitle");
+      setText(".brand h1", t("appTitle"));
+      setText(".brand p", t("appSubtitle"));
+      setText("#languageHint", t("languageHint"));
+      labelFor("taskInput", t("taskLabel"));
+      taskInput.placeholder = t("taskPlaceholder");
+      labelFor("sourceInput", t("sourceLabel"));
+      const sourceTexts = currentLang === "en"
+        ? ["Manager", "Business colleague", "Client", "Cross-team lead", "Other requester"]
+        : ["上级", "业务同事", "客户", "跨部门负责人", "其他需求方"];
+      [...sourceInput.options].forEach((option, index) => {
+        if (sourceTexts[index]) option.textContent = sourceTexts[index];
+      });
+      labelFor("deadlineInput", t("deadlineLabel"));
+      const deadlineTexts = currentLang === "en"
+        ? ["By end of today", "Before tomorrow morning meeting", "Within one week", "No clear time"]
+        : ["今天下班前", "明天上午例会前", "一周内", "暂无明确时间"];
+      [...deadlineInput.options].forEach((option, index) => {
+        if (deadlineTexts[index]) option.textContent = deadlineTexts[index];
+      });
+      setText(".optional summary", t("optionalSummary"));
+      labelFor("peopleInput", t("peopleLabel"));
+      peopleInput.placeholder = t("peoplePlaceholder");
+      labelFor("worryInput", t("worryLabel"));
+      worryInput.placeholder = t("worryPlaceholder");
+      setText("#openAiSetupBtn", t("enableAi"));
+      setText("#historyBtn", t("history"));
+      setText("#generateBtn", currentReport ? t("generated") : t("generate"));
+      const methodItems = document.querySelectorAll(".method span");
+      if (methodItems[0]) methodItems[0].textContent = t("methodThink");
+      if (methodItems[1]) methodItems[1].textContent = t("methodAsk");
+      if (methodItems[2]) methodItems[2].textContent = t("methodRecord");
+      setText("#copyScriptBtn", t("copyScript"));
+      setText("#copyReportBtn", t("copyReport"));
+      setText("#exportWordBtn", t("exportWord"));
+      setText("#exportExcelBtn", t("exportExcel"));
+      setText("#printBtn", t("print"));
+      setText(".empty-state strong", t("emptyTitle"));
+      setText(".empty-state span", t("emptyText"));
+      setText(".copyright-note", t("copyrightTop"));
+      setText(".footer-note summary", t("usageTitle"));
+      const footerParagraphs = document.querySelectorAll(".footer-note p");
+      if (footerParagraphs[0]) footerParagraphs[0].textContent = t("usageText");
+      if (footerParagraphs[1]) footerParagraphs[1].textContent = t("copyrightText");
+      setText("#termsTitle", t("usageTitle"));
+      const modalSections = document.querySelectorAll("#termsModal .modal-section");
+      if (modalSections[0]) {
+        modalSections[0].querySelector("h3").textContent = t("usageTitle");
+        modalSections[0].querySelectorAll("p").forEach((p, index) => {
+          const parts = t("usageText").split("。").filter(Boolean);
+          p.textContent = currentLang === "zh" ? `${parts[index] || ""}。` : (index === 0 ? t("usageText") : "");
+          p.hidden = currentLang === "en" && index > 0;
+        });
+      }
+      if (modalSections[1]) {
+        modalSections[1].querySelector("h3").textContent = t("copyrightTitle");
+        const ps = modalSections[1].querySelectorAll("p");
+        if (ps[0]) ps[0].textContent = t("copyrightText");
+        if (ps[1]) ps[1].hidden = true;
+      }
+      setText("#cancelTermsBtn", t("cancelTerms"));
+      setText("#agreeTermsBtn", t("agreeTerms"));
+      setText("#accountTitle", t("accountTitle"));
+      setText("#accountModal .hint", t("accountHint"));
+      labelFor("accountNameInput", t("accountLabel"));
+      accountNameInput.placeholder = t("accountPlaceholder");
+      labelFor("providerInput", t("providerLabel"));
+      labelFor("apiUrlInput", t("apiUrlLabel"));
+      labelFor("modelInput", t("modelLabel"));
+      labelFor("apiKeyInput", t("apiKeyLabel"));
+      setText("#verifyApiBtn", t("verifyApi"));
+      setText("#closeAccountBtn", t("close"));
+      setText("#closeHistoryBtn", t("close"));
+      updateRuntimeStatus();
+      if (!aiVerified) setApiStatus(t("unverified"));
+      if (currentReport) renderReport(currentReport);
+    }
 
     function escapeHtml(value) {
       return String(value)
@@ -1020,6 +1307,66 @@
 
     function buildFallbackReport(task, source, deadline, context, people, worry) {
       const focus = getTaskFocus(task);
+      if (currentLang === "en") {
+        return {
+          understanding: `My current understanding is that the owner should first form a confirmable direction around “${focus}”, especially the goal, deliverable, timing, and task boundaries, before moving into execution.`,
+          scope: [
+            `Focus first on the purpose, deliverable, and confirmation basis of “${focus}”.`,
+            "Do not assume this includes a long-term mechanism, full system, or extra execution work.",
+            "Do not assume cross-team coordination, budget, or approval items that were not stated in the original task."
+          ],
+          deliverables: ["Goal confirmation record", "Initial action plan", "Task boundary note", "Confirmation question list"],
+          taskBreakdown: [
+            { flow: "Goal confirmation", milestone: "A task goal that can be repeated back clearly", deliverable: "Goal and deliverable confirmation record" },
+            { flow: "Information check", milestone: "Key missing facts are identified", deliverable: "Source list and gap note" },
+            { flow: "Plan drafting", milestone: "A discussion-ready initial path is formed", deliverable: "Brief action plan" },
+            { flow: "Record confirmation", milestone: "Key items are confirmed and recorded", deliverable: "Confirmation record and change basis" }
+          ],
+          risk: {
+            title: worry ? "User Concern" : "Key Misalignment Risk",
+            body: worry || `If the real goal, deliverable, and boundary behind “${focus}” are not confirmed, the owner may treat a task that needs alignment as a direct execution task.`
+          },
+          questions: [
+            {
+              item: "Confirm the expected outcome to avoid moving in the wrong direction from the start",
+              priority: "High",
+              target: `${source}/task requester`,
+              wording: `I will first understand this as clarifying the goal, deliverable, and boundary around “${focus}”. Does that match your expectation?`,
+              upward: "Required"
+            },
+            {
+              item: "Confirm the final deliverable to avoid delivering the wrong format",
+              priority: "High",
+              target: `${source}/task requester`,
+              wording: "Would you prefer a plan, an execution result, or a decision note as the final output?",
+              upward: "Required"
+            },
+            {
+              item: "Confirm the first response and completion expectation to avoid mixing kickoff, plan, and execution",
+              priority: "High",
+              target: `${source}/task requester`,
+              wording: `For timing, I understand the first response is due by ${deadline}. After that, should I complete execution or submit a plan for confirmation first?`,
+              upward: "Required"
+            },
+            {
+              item: "Confirm task boundaries to prevent scope from expanding into unstated items",
+              priority: "High",
+              target: `${source}/task requester`,
+              wording: `To stay focused, I suggest we first keep this to the direct goal and confirmation basis of “${focus}”, without expanding into unstated items. Is that okay?`,
+              upward: "Recommended"
+            },
+            {
+              item: "Confirm collaboration support to avoid discovering missing resources later",
+              priority: "Medium",
+              target: people || "relevant collaborators",
+              wording: "I want to confirm whether this requires support in materials, people, or timing, so I can make the plan realistic.",
+              upward: "Can wait"
+            }
+          ],
+          script: `I will first proceed with this understanding: we need to clarify the goal, deliverable, timing, and boundary around “${focus}”. To avoid misalignment, I would like to confirm three points: the expected outcome, the preferred deliverable, and whether the next step should be execution or a plan for confirmation. After that, I will prepare a brief action plan.`,
+          checklist: []
+        };
+      }
       return {
         understanding: `我目前理解，负责人需要先围绕“${focus}”形成可确认的推进口径，重点是明确目标、交付物、时间节点和任务边界，再决定是否进入具体执行。`,
         scope: [
@@ -1081,6 +1428,50 @@
     }
 
     function buildPrompt(input) {
+      if (currentLang === "en") {
+        return `You are a senior project kickoff advisor. Help the project owner handle a vague one-sentence assignment.
+
+Rules:
+1. Do not include a separate "digest first" section.
+2. Do not classify the task type.
+3. Avoid generic filler such as "form an actionable initial result around the task".
+4. All content must closely reflect the original task.
+5. Task boundaries must be specific to the original task, not generic templates.
+6. Risk must use a "risk title + risk explanation" format.
+7. The "Ask" section should include only 3-5 most important confirmation items, prioritizing the need for upward confirmation.
+8. Suggested wording should use confirmable statements so the other person can answer easily.
+9. Return all content in English.
+
+User input:
+- One-sentence task: ${input.task}
+- Assigned by: ${input.source}
+- First response time: ${input.deadline}
+- Known background: ${input.context || "None"}
+- Possible people or teams involved: ${input.people || "None"}
+- Biggest concern: ${input.worry || "None"}
+
+Return JSON only. Do not return Markdown or explanations. JSON schema:
+{
+  "understanding": "Project owner's current understanding, one paragraph",
+  "scope": ["Possible task boundary 1", "Possible task boundary 2", "Possible task boundary 3"],
+  "deliverables": ["Initial deliverable direction 1", "Initial deliverable direction 2"],
+  "taskBreakdown": [
+    {"flow": "Main flow", "milestone": "Possible milestone", "deliverable": "Corresponding deliverable"}
+  ],
+  "risk": {"title": "Key risk or user concern", "body": "Risk explanation"},
+  "questions": [
+    {
+      "item": "Confirmation item, combining what to confirm and why it matters",
+      "priority": "High/Medium/Low",
+      "target": "Who to ask",
+      "wording": "Suggested wording",
+      "upward": "Required/Recommended/Can wait/Not needed"
+    }
+  ],
+  "script": "Upward confirmation wording, one paragraph",
+  "checklist": ["Record item, must include original task wording and confirmation items from the Ask section"]
+}`;
+      }
       return `你是一个资深项目启动顾问。请帮助项目负责人处理一句话任务。
 
 原则：
@@ -1195,8 +1586,10 @@
     }
 
     function buildRecordChecklist(aiChecklist, questions, task = "") {
-      const base = [task ? `原始任务原话：${task}` : "原始任务原话"];
-      const questionItems = questions.map(question => `记录待确认事项：${question.item}`);
+      const baseLabel = currentLang === "en" ? "Original task wording" : "原始任务原话";
+      const confirmLabel = currentLang === "en" ? "Record confirmation item" : "记录待确认事项";
+      const base = [task ? `${baseLabel}: ${task}` : baseLabel];
+      const questionItems = questions.map(question => `${confirmLabel}: ${question.item}`);
       const aiItems = Array.isArray(aiChecklist) ? aiChecklist : [];
       const items = base.concat(questionItems, aiItems);
       return [...new Set(items)].slice(0, 8);
@@ -1220,7 +1613,7 @@
     async function buildReport() {
       const task = taskInput.value.trim();
       if (!task) {
-        showToast("请先填写一句话任务");
+        showToast(t("needTask"));
         taskInput.focus();
         return;
       }
@@ -1236,19 +1629,19 @@
       let aiReport = null;
       const generateBtn = document.querySelector("#generateBtn");
       generateBtn.disabled = true;
-      generateBtn.textContent = "生成中";
+      generateBtn.textContent = t("generating");
 
       if (aiVerified) {
         try {
           aiReport = await callAi(input);
         } catch (error) {
           aiVerified = false;
-          setApiStatus("API 调用失败，已切回本地识别", "error");
-          showToast("AI 调用失败，已使用本地识别结果");
+          setApiStatus(t("aiStatusFailed"), "error");
+          showToast(t("aiCallFail"));
         }
       }
       generateBtn.disabled = false;
-      generateBtn.textContent = "生成报告";
+      generateBtn.textContent = t("generate");
 
       const report = normalizeReport(aiReport, fallback, task);
       const { understanding, scope, deliverables, taskBreakdown, risk, questions, script, checklist } = report;
@@ -1265,19 +1658,19 @@
         <div class="report-body">
           <header class="report-header">
             <div class="report-title">
-              <h2>任务启动小报告</h2>
+              <h2>${escapeHtml(t("reportTitle"))}</h2>
               <p>${escapeHtml(task)}</p>
             </div>
             <div class="source-pill">${escapeHtml(source)} · ${escapeHtml(deadline)}</div>
           </header>
 
           <section class="section">
-            <h3 class="section-title">三思 <small>形成待确认理解</small></h3>
+            <h3 class="section-title">${escapeHtml(t("methodThink"))} <small>${escapeHtml(t("thinkSmall"))}</small></h3>
             <div class="section-content">
               <div class="understanding">${escapeHtml(understanding)}</div>
               <div class="grid-3">
-                ${listBox("可能的任务边界", scope)}
-                ${listBox("初步交付物方向", deliverables)}
+                ${listBox(t("scopeTitle"), scope)}
+                ${listBox(t("deliverableTitle"), deliverables)}
                 <div class="info-box">
                   <h4>${escapeHtml(risk.title)}</h4>
                   <div class="risk">${escapeHtml(risk.body)}</div>
@@ -1288,11 +1681,11 @@
           </section>
 
           <section class="section">
-            <h3 class="section-title">慎问 <small>少问，问准，留痕</small></h3>
+            <h3 class="section-title">${escapeHtml(t("methodAsk"))} <small>${escapeHtml(t("askSmall"))}</small></h3>
             <div class="section-content">
               ${questionTable(questions)}
               <div>
-                <h4>对上确认话术</h4>
+                <h4>${escapeHtml(t("scriptTitle"))}</h4>
                 <div class="script-box">${escapeHtml(script)}</div>
               </div>
               ${checklistTable(checklist)}
@@ -1300,7 +1693,7 @@
           </section>
         </div>
       `;
-      generateBtn.textContent = "已生成";
+      generateBtn.textContent = t("generated");
     }
 
     function listBox(title, items) {
@@ -1317,11 +1710,11 @@
         <table class="questions">
           <thead>
             <tr>
-              <th>待确认事项</th>
-              <th>优先级</th>
-              <th>询问对象</th>
-              <th>建议问法</th>
-              <th>向上确认的必要性</th>
+              <th>${escapeHtml(t("questionItem"))}</th>
+              <th>${escapeHtml(t("priority"))}</th>
+              <th>${escapeHtml(t("target"))}</th>
+              <th>${escapeHtml(t("wording"))}</th>
+              <th>${escapeHtml(t("upward"))}</th>
             </tr>
           </thead>
           <tbody>
@@ -1350,13 +1743,13 @@
 
       return `
         <div>
-          <h4>任务拆解</h4>
+          <h4>${escapeHtml(t("breakdownTitle"))}</h4>
           <table>
             <thead>
               <tr>
-                <th>主要流程</th>
-                <th>可能的里程碑</th>
-                <th>对应交付物</th>
+                <th>${escapeHtml(t("flow"))}</th>
+                <th>${escapeHtml(t("milestone"))}</th>
+                <th>${escapeHtml(t("deliverable"))}</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
@@ -1368,7 +1761,7 @@
     function checklistTable(items) {
       return `
         <div>
-          <h4>书面记录 Checklist</h4>
+          <h4>${escapeHtml(t("checklistTitle"))}</h4>
           <table class="checklist">
             <tbody>
               ${items.map(item => `
@@ -1384,43 +1777,43 @@
     }
 
     function priorityTag(value) {
-      const className = value === "高" ? "high" : "medium";
+      const className = value === "高" || value === "High" ? "high" : "medium";
       return `<span class="tag ${className}">${value}</span>`;
     }
 
     function upwardTag(value) {
-      const map = { "必须": "must", "建议": "suggest", "可暂缓": "wait", "无需": "wait" };
+      const map = { "必须": "must", "建议": "suggest", "可暂缓": "wait", "无需": "wait", "Required": "must", "Recommended": "suggest", "Can wait": "wait", "Not needed": "wait" };
       return `<span class="tag ${map[value] || "wait"}">${value}</span>`;
     }
 
     function makePlainText(data) {
       const questionText = data.questions.map((q, index) =>
-        `${index + 1}. ${q.item}\n优先级：${q.priority}\n询问对象：${q.target}\n建议问法：${q.wording}\n向上确认的必要性：${q.upward}`
+        `${index + 1}. ${q.item}\n${t("priority")}：${q.priority}\n${t("target")}：${q.target}\n${t("wording")}：${q.wording}\n${t("upward")}：${q.upward}`
       ).join("\n\n");
       const breakdownText = (data.taskBreakdown || []).map((item, index) =>
         `${index + 1}. ${item.flow || ""}｜${item.milestone || ""}｜${item.deliverable || ""}`
       ).join("\n");
 
       return [
-        "任务启动小报告",
+        t("reportTitle"),
         "",
-        `原始任务：${data.task}`,
-        `任务来源：${data.source}`,
-        `反馈时限：${data.deadline}`,
+        `${t("taskLabel")}：${data.task}`,
+        `${t("sourceLabel")}：${data.source}`,
+        `${t("deadlineLabel")}：${data.deadline}`,
         "",
-        "一、三思",
-        `项目负责人当前理解：${data.understanding}`,
-        `可能的任务边界：\n${data.scope.map(item => `- ${item}`).join("\n")}`,
-        `初步交付物方向：\n${(data.deliverables || []).map(item => `- ${item}`).join("\n")}`,
-        `任务拆解：\n${breakdownText}`,
+        `一、${t("methodThink")}`,
+        `${t("thinkSmall")}：${data.understanding}`,
+        `${t("scopeTitle")}：\n${data.scope.map(item => `- ${item}`).join("\n")}`,
+        `${t("deliverableTitle")}：\n${(data.deliverables || []).map(item => `- ${item}`).join("\n")}`,
+        `${t("breakdownTitle")}：\n${breakdownText}`,
         `${data.risk.title}：${data.risk.body}`,
         "",
-        "二、慎问",
+        `二、${t("methodAsk")}`,
         questionText,
         "",
-        `对上确认话术：${data.script}`,
+        `${t("scriptTitle")}：${data.script}`,
         "",
-        `书面记录 Checklist：\n${data.checklist.map(item => `- ${item}`).join("\n")}`
+        `${t("checklistTitle")}：\n${data.checklist.map(item => `- ${item}`).join("\n")}`
       ].join("\n");
     }
 
@@ -1431,9 +1824,9 @@
       }
       try {
         await navigator.clipboard.writeText(text);
-        showToast("已复制");
+        showToast(t("copied"));
       } catch (error) {
-        showToast("复制失败，请手动选择文本");
+        showToast(t("copyFail"));
       }
     }
 
@@ -1450,20 +1843,20 @@
 
     function resetApiVerification() {
       aiVerified = false;
-      setApiStatus("未验证，当前使用本地识别");
+      setApiStatus(t("unverified"));
       updateRuntimeStatus();
     }
 
     function updateRuntimeStatus() {
       if (aiVerified && activeAccountName) {
-        runtimeStatus.textContent = `当前使用：${activeAccountName} / AI`;
+        runtimeStatus.textContent = `${t("activeAi")}：${activeAccountName} / AI`;
         return;
       }
       if (activeAccountName) {
-        runtimeStatus.textContent = `当前账号：${activeAccountName}（未验证）`;
+        runtimeStatus.textContent = `${t("accountUnverified")}：${activeAccountName}${t("accountUnverifiedSuffix")}`;
         return;
       }
-      runtimeStatus.textContent = "当前使用：本地识别";
+      runtimeStatus.textContent = t("activeLocal");
     }
 
     function applyProviderPreset(provider) {
@@ -1481,7 +1874,7 @@
     function saveAccountConfig() {
       const name = accountNameInput.value.trim();
       if (!name) {
-        showToast("请先填写账号名称");
+        showToast(t("needAccount"));
         accountNameInput.focus();
         return false;
       }
@@ -1547,25 +1940,25 @@
     async function verifyApi() {
       if (!saveAccountConfig()) return;
       verifyApiBtn.disabled = true;
-      verifyApiBtn.textContent = "验证中";
-      setApiStatus("正在验证 API...");
+      verifyApiBtn.textContent = t("verifying");
+      setApiStatus(currentLang === "en" ? "Verifying API..." : "正在验证 API...");
 
       try {
         await validateAi();
         aiVerified = true;
-        setApiStatus(`已验证：${providerInput.options[providerInput.selectedIndex].text} / ${modelInput.value.trim()}`, "ok");
+        setApiStatus(`${t("verifiedStatus")}：${providerInput.options[providerInput.selectedIndex].text} / ${modelInput.value.trim()}`, "ok");
         saveAccountConfig();
         updateRuntimeStatus();
         accountModal.hidden = true;
-        showToast("API 验证通过");
+        showToast(t("verifyOk"));
       } catch (error) {
         aiVerified = false;
-        setApiStatus("验证失败，当前使用本地识别", "error");
+        setApiStatus(currentLang === "en" ? "Verification failed. Using local recognition." : "验证失败，当前使用本地识别", "error");
         updateRuntimeStatus();
-        showToast("API 验证失败");
+        showToast(t("verifyFail"));
       } finally {
         verifyApiBtn.disabled = false;
-        verifyApiBtn.textContent = "验证 API";
+        verifyApiBtn.textContent = t("verifyApi");
       }
     }
 
@@ -1587,7 +1980,7 @@
       const history = getHistory();
       historyDrawer.hidden = false;
       if (!history.length) {
-        historyList.innerHTML = `<div class="empty-state"><div><strong>暂无历史记录</strong><span>生成过的报告会保存在本机浏览器中。</span></div></div>`;
+        historyList.innerHTML = `<div class="empty-state"><div><strong>${escapeHtml(t("noHistoryTitle"))}</strong><span>${escapeHtml(t("noHistoryText"))}</span></div></div>`;
         return;
       }
 
@@ -1596,8 +1989,8 @@
           <strong>${escapeHtml(item.task)}</strong>
           <span>${escapeHtml(new Date(item.createdAt).toLocaleString())} · ${escapeHtml(item.source)} · ${escapeHtml(item.deadline)}</span>
           <div class="history-actions">
-            <button class="tool-button" type="button" data-history-load="${index}">查看报告</button>
-            <button class="tool-button" type="button" data-history-copy="${index}">复制报告</button>
+            <button class="tool-button" type="button" data-history-load="${index}">${escapeHtml(t("viewReport"))}</button>
+            <button class="tool-button" type="button" data-history-copy="${index}">${escapeHtml(t("copyHistory"))}</button>
           </div>
         </div>
       `).join("");
@@ -1618,7 +2011,7 @@
       lastReportText = report.plainText || "";
       renderReport(report);
       closeHistory();
-      document.querySelector("#generateBtn").textContent = "已生成";
+      document.querySelector("#generateBtn").textContent = t("generated");
     }
 
     function renderReport(report) {
@@ -1627,19 +2020,19 @@
         <div class="report-body">
           <header class="report-header">
             <div class="report-title">
-              <h2>任务启动小报告</h2>
+              <h2>${escapeHtml(t("reportTitle"))}</h2>
               <p>${escapeHtml(task)}</p>
             </div>
             <div class="source-pill">${escapeHtml(source)} · ${escapeHtml(deadline)}</div>
           </header>
 
           <section class="section">
-            <h3 class="section-title">三思 <small>形成待确认理解</small></h3>
+            <h3 class="section-title">${escapeHtml(t("methodThink"))} <small>${escapeHtml(t("thinkSmall"))}</small></h3>
             <div class="section-content">
               <div class="understanding">${escapeHtml(understanding)}</div>
               <div class="grid-3">
-                ${listBox("可能的任务边界", scope)}
-                ${listBox("初步交付物方向", deliverables)}
+                ${listBox(t("scopeTitle"), scope)}
+                ${listBox(t("deliverableTitle"), deliverables)}
                 <div class="info-box">
                   <h4>${escapeHtml(risk.title)}</h4>
                   <div class="risk">${escapeHtml(risk.body)}</div>
@@ -1650,11 +2043,11 @@
           </section>
 
           <section class="section">
-            <h3 class="section-title">慎问 <small>少问，问准，留痕</small></h3>
+            <h3 class="section-title">${escapeHtml(t("methodAsk"))} <small>${escapeHtml(t("askSmall"))}</small></h3>
             <div class="section-content">
               ${questionTable(questions)}
               <div>
-                <h4>对上确认话术</h4>
+                <h4>${escapeHtml(t("scriptTitle"))}</h4>
                 <div class="script-box">${escapeHtml(script)}</div>
               </div>
               ${checklistTable(checklist)}
@@ -1676,7 +2069,7 @@
 
     function exportWord() {
       if (!currentReport) {
-        showToast("请先生成报告");
+        showToast(t("needReport"));
         return;
       }
       const html = `<!doctype html><html><head><meta charset="utf-8"><title>任务启动小报告</title></head><body><pre style="font-family:Arial,'Microsoft YaHei',sans-serif;white-space:pre-wrap;">${escapeHtml(currentReport.plainText || lastReportText)}</pre></body></html>`;
@@ -1685,22 +2078,22 @@
 
     function exportExcel() {
       if (!currentReport) {
-        showToast("请先生成报告");
+        showToast(t("needReport"));
         return;
       }
       const rows = [
-        ["模块", "内容1", "内容2", "内容3"],
-        ["原始任务", currentReport.task, "", ""],
-        ["任务来源", currentReport.source, "", ""],
-        ["反馈时限", currentReport.deadline, "", ""],
-        ["项目负责人当前理解", currentReport.understanding, "", ""],
-        ...currentReport.scope.map(item => ["任务边界", item, "", ""]),
-        ...currentReport.deliverables.map(item => ["初步交付物", item, "", ""]),
-        ...currentReport.taskBreakdown.map(item => ["任务拆解", item.flow || "", item.milestone || "", item.deliverable || ""]),
+        [currentLang === "en" ? "Section" : "模块", currentLang === "en" ? "Content 1" : "内容1", currentLang === "en" ? "Content 2" : "内容2", currentLang === "en" ? "Content 3" : "内容3"],
+        [t("taskLabel"), currentReport.task, "", ""],
+        [t("sourceLabel"), currentReport.source, "", ""],
+        [t("deadlineLabel"), currentReport.deadline, "", ""],
+        [t("thinkSmall"), currentReport.understanding, "", ""],
+        ...currentReport.scope.map(item => [t("scopeTitle"), item, "", ""]),
+        ...currentReport.deliverables.map(item => [t("deliverableTitle"), item, "", ""]),
+        ...currentReport.taskBreakdown.map(item => [t("breakdownTitle"), item.flow || "", item.milestone || "", item.deliverable || ""]),
         [currentReport.risk.title, currentReport.risk.body, "", ""],
-        ...currentReport.questions.map(item => ["慎问", item.item, item.target, item.wording]),
-        ["对上确认话术", currentReport.script, "", ""],
-        ...currentReport.checklist.map(item => ["书面记录", item, "", ""])
+        ...currentReport.questions.map(item => [t("methodAsk"), item.item, item.target, item.wording]),
+        [t("scriptTitle"), currentReport.script, "", ""],
+        ...currentReport.checklist.map(item => [t("checklistTitle"), item, "", ""])
       ];
       const csv = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(",")).join("\n");
       downloadFile(`任务启动小报告-${safeFilename(currentReport.task)}.csv`, "text/csv;charset=utf-8", `\ufeff${csv}`);
@@ -1711,6 +2104,11 @@
     }
 
     providerInput.addEventListener("change", () => applyProviderPreset(providerInput.value));
+    languageInput.addEventListener("change", () => {
+      currentLang = languageInput.value;
+      localStorage.setItem("task-starter-language", currentLang);
+      updateLanguage();
+    });
     accountNameInput.addEventListener("input", resetApiVerification);
     apiUrlInput.addEventListener("input", resetApiVerification);
     modelInput.addEventListener("input", resetApiVerification);
@@ -1751,7 +2149,9 @@
     document.querySelector("#exportWordBtn").addEventListener("click", exportWord);
     document.querySelector("#exportExcelBtn").addEventListener("click", exportExcel);
     document.querySelector("#printBtn").addEventListener("click", () => window.print());
+    languageInput.value = currentLang;
     loadActiveAccount();
+    updateLanguage();
   </script>
 </body>
 </html>
