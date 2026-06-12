@@ -142,6 +142,21 @@
       font-weight: 650;
     }
 
+    .ai-entry {
+      border-top: 1px solid var(--soft-line);
+      padding-top: 14px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .ai-entry span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
     .api-status.error {
       color: var(--red);
       font-weight: 650;
@@ -247,6 +262,33 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+    }
+
+    .main-head {
+      display: grid;
+      gap: 8px;
+    }
+
+    .copyright-note,
+    .footer-note {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .footer-note {
+      border-top: 1px solid var(--soft-line);
+      padding: 12px 4px 0;
+    }
+
+    .footer-note summary {
+      cursor: pointer;
+      font-weight: 650;
+      color: #344054;
+    }
+
+    .footer-note p {
+      margin: 8px 0 0;
     }
 
     .method {
@@ -593,6 +635,65 @@
       flex-wrap: wrap;
     }
 
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      background: rgba(31, 41, 51, 0.42);
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    .modal-backdrop[hidden] {
+      display: none;
+    }
+
+    .modal {
+      width: min(620px, 100%);
+      max-height: min(760px, 92vh);
+      overflow: auto;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .modal h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .modal-section {
+      display: grid;
+      gap: 8px;
+      color: #344054;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .modal-section h3 {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .modal-section p {
+      margin: 0;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--soft-line);
+      padding-top: 12px;
+    }
+
     .toast {
       position: fixed;
       right: 18px;
@@ -728,44 +829,10 @@
         </div>
       </details>
 
-      <details class="optional" id="aiConfigDetails">
-        <summary>AI 配置</summary>
-        <p class="hint">默认使用本地识别；API 验证通过后，生成报告时会自动在后台使用 AI。</p>
-        <div class="field">
-          <label for="providerInput">AI 服务商</label>
-          <select id="providerInput">
-            <option value="chatgpt" selected>ChatGPT</option>
-            <option value="kimi">Kimi</option>
-            <option value="deepseek">DeepSeek</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="apiUrlInput">API 路径</label>
-          <input id="apiUrlInput" value="https://api.openai.com/v1/chat/completions" placeholder="例如：https://api.openai.com/v1/chat/completions">
-        </div>
-        <div class="field">
-          <label for="modelInput">模型</label>
-          <input id="modelInput" list="modelOptions" value="gpt-4.1-mini" placeholder="输入或选择模型">
-          <datalist id="modelOptions">
-            <option value="gpt-4.1-mini"></option>
-            <option value="gpt-4.1"></option>
-            <option value="gpt-4o-mini"></option>
-            <option value="gpt-4o"></option>
-            <option value="moonshot-v1-8k"></option>
-            <option value="moonshot-v1-32k"></option>
-            <option value="deepseek-chat"></option>
-            <option value="deepseek-reasoner"></option>
-          </datalist>
-        </div>
-        <div class="field">
-          <label for="apiKeyInput">API Key</label>
-          <input id="apiKeyInput" type="password" autocomplete="off" placeholder="仅本地原型测试使用">
-        </div>
-        <div class="api-row">
-          <button class="button secondary" id="verifyApiBtn" type="button">验证 API</button>
-          <span class="api-status" id="apiStatus">未验证，当前使用本地识别</span>
-        </div>
-      </details>
+      <div class="ai-entry">
+        <span id="runtimeStatus">当前使用：本地识别</span>
+        <button class="tool-button" id="openAiSetupBtn" type="button">启用 AI</button>
+      </div>
 
       <div class="actions">
         <button class="button secondary" id="historyBtn" type="button">历史记录</button>
@@ -774,18 +841,21 @@
     </aside>
 
     <main class="main">
-      <div class="topbar">
-        <div class="method" aria-label="方法">
-          <span>三思</span>
-          <span>慎问</span>
-          <span>留痕</span>
-        </div>
-        <div class="toolbar">
-          <button class="tool-button" id="copyScriptBtn" type="button">复制确认话术</button>
-          <button class="tool-button" id="copyReportBtn" type="button">复制报告</button>
-          <button class="tool-button" id="exportWordBtn" type="button">导出 Word</button>
-          <button class="tool-button" id="exportExcelBtn" type="button">导出 Excel</button>
-          <button class="tool-button" id="printBtn" type="button">打印/导出</button>
+      <div class="main-head">
+        <div class="copyright-note">版权声明：本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。</div>
+        <div class="topbar">
+          <div class="method" aria-label="方法">
+            <span>三思</span>
+            <span>慎问</span>
+            <span>留痕</span>
+          </div>
+          <div class="toolbar">
+            <button class="tool-button" id="copyScriptBtn" type="button">复制确认话术</button>
+            <button class="tool-button" id="copyReportBtn" type="button">复制报告</button>
+            <button class="tool-button" id="exportWordBtn" type="button">导出 Word</button>
+            <button class="tool-button" id="exportExcelBtn" type="button">导出 Excel</button>
+            <button class="tool-button" id="printBtn" type="button">打印/导出</button>
+          </div>
         </div>
       </div>
 
@@ -797,6 +867,12 @@
           </div>
         </div>
       </section>
+
+      <details class="footer-note">
+        <summary>使用说明与隐私声明</summary>
+        <p>本应用采用本机账号模式，不需要注册，也不提供云端账号。你输入的账号名仅用于在当前浏览器中区分本机配置。本应用不提供云端存储。你的内容、配置、使用记录和 API Key 仅保存在当前浏览器中。我们不会收集、保存、分析或追踪你的任何使用行为、输入内容、生成结果或 API Key。API Key 由你自己提供，模型费用由你的模型服务商账户承担。请勿在公共设备上保存 API Key。</p>
+        <p>版权声明：本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。未经许可，不得复制、修改、分发、商用或二次发布。用户通过自有 API Key 调用模型生成的内容，由用户自行负责保存、使用和确认权利归属。</p>
+      </details>
     </main>
   </div>
 
@@ -811,19 +887,94 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="termsModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+      <h2 id="termsTitle">使用说明与隐私声明</h2>
+      <div class="modal-section">
+        <h3>使用说明与隐私声明</h3>
+        <p>本应用采用本机账号模式，不需要注册，也不提供云端账号。</p>
+        <p>你输入的账号名仅用于在当前浏览器中区分本机配置。</p>
+        <p>本应用不提供云端存储。你的内容、配置、使用记录和 API Key 仅保存在当前浏览器中。</p>
+        <p>我们不会收集、保存、分析或追踪你的任何使用行为、输入内容、生成结果或 API Key。</p>
+        <p>API Key 由你自己提供，模型费用由你的模型服务商账户承担。</p>
+        <p>请勿在公共设备上保存 API Key。</p>
+      </div>
+      <div class="modal-section">
+        <h3>版权声明</h3>
+        <p>本应用及其界面、功能设计、提示词模板和相关代码版权归作者所有。未经许可，不得复制、修改、分发、商用或二次发布。</p>
+        <p>用户通过自有 API Key 调用模型生成的内容，由用户自行负责保存、使用和确认权利归属。</p>
+      </div>
+      <div class="modal-actions">
+        <button class="button secondary" id="cancelTermsBtn" type="button">暂不启用</button>
+        <button class="button primary" id="agreeTermsBtn" type="button">同意并继续</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="accountModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
+      <h2 id="accountTitle">本机账号与 API 配置</h2>
+      <p class="hint">账号名仅用于当前浏览器区分本机配置；API 验证通过后，生成报告会自动在后台使用 AI。</p>
+      <div class="field">
+        <label for="accountNameInput">账号名称</label>
+        <input id="accountNameInput" placeholder="例如：我的工作电脑">
+      </div>
+      <div class="field">
+        <label for="providerInput">AI 服务商</label>
+        <select id="providerInput">
+          <option value="chatgpt" selected>ChatGPT</option>
+          <option value="kimi">Kimi</option>
+          <option value="deepseek">DeepSeek</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="apiUrlInput">API 路径</label>
+        <input id="apiUrlInput" value="https://api.openai.com/v1/chat/completions" placeholder="例如：https://api.openai.com/v1/chat/completions">
+      </div>
+      <div class="field">
+        <label for="modelInput">模型</label>
+        <input id="modelInput" list="modelOptions" value="gpt-4.1-mini" placeholder="输入或选择模型">
+        <datalist id="modelOptions">
+          <option value="gpt-4.1-mini"></option>
+          <option value="gpt-4.1"></option>
+          <option value="gpt-4o-mini"></option>
+          <option value="gpt-4o"></option>
+          <option value="moonshot-v1-8k"></option>
+          <option value="moonshot-v1-32k"></option>
+          <option value="deepseek-chat"></option>
+          <option value="deepseek-reasoner"></option>
+        </datalist>
+      </div>
+      <div class="field">
+        <label for="apiKeyInput">API Key</label>
+        <input id="apiKeyInput" type="password" autocomplete="off" placeholder="请勿在公共设备上保存 API Key">
+      </div>
+      <div class="api-row">
+        <button class="button secondary" id="verifyApiBtn" type="button">验证 API</button>
+        <span class="api-status" id="apiStatus">未验证，当前使用本地识别</span>
+      </div>
+      <div class="modal-actions">
+        <button class="button secondary" id="closeAccountBtn" type="button">关闭</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const taskInput = document.querySelector("#taskInput");
     const sourceInput = document.querySelector("#sourceInput");
     const deadlineInput = document.querySelector("#deadlineInput");
     const peopleInput = document.querySelector("#peopleInput");
     const worryInput = document.querySelector("#worryInput");
+    const accountNameInput = document.querySelector("#accountNameInput");
     const providerInput = document.querySelector("#providerInput");
     const apiUrlInput = document.querySelector("#apiUrlInput");
     const modelInput = document.querySelector("#modelInput");
     const apiKeyInput = document.querySelector("#apiKeyInput");
     const verifyApiBtn = document.querySelector("#verifyApiBtn");
     const apiStatus = document.querySelector("#apiStatus");
-    const aiConfigDetails = document.querySelector("#aiConfigDetails");
+    const runtimeStatus = document.querySelector("#runtimeStatus");
+    const termsModal = document.querySelector("#termsModal");
+    const accountModal = document.querySelector("#accountModal");
     const reportEl = document.querySelector("#report");
     const toastEl = document.querySelector("#toast");
     const historyDrawer = document.querySelector("#historyDrawer");
@@ -833,6 +984,7 @@
     let lastScript = "";
     let currentReport = null;
     let aiVerified = false;
+    let activeAccountName = "";
 
     const aiPresets = {
       chatgpt: {
@@ -1299,6 +1451,19 @@
     function resetApiVerification() {
       aiVerified = false;
       setApiStatus("未验证，当前使用本地识别");
+      updateRuntimeStatus();
+    }
+
+    function updateRuntimeStatus() {
+      if (aiVerified && activeAccountName) {
+        runtimeStatus.textContent = `当前使用：${activeAccountName} / AI`;
+        return;
+      }
+      if (activeAccountName) {
+        runtimeStatus.textContent = `当前账号：${activeAccountName}（未验证）`;
+        return;
+      }
+      runtimeStatus.textContent = "当前使用：本地识别";
     }
 
     function applyProviderPreset(provider) {
@@ -1309,7 +1474,78 @@
       resetApiVerification();
     }
 
+    function accountStorageKey(name) {
+      return `task-starter-account:${name}`;
+    }
+
+    function saveAccountConfig() {
+      const name = accountNameInput.value.trim();
+      if (!name) {
+        showToast("请先填写账号名称");
+        accountNameInput.focus();
+        return false;
+      }
+      activeAccountName = name;
+      localStorage.setItem("task-starter-active-account", name);
+      localStorage.setItem(accountStorageKey(name), JSON.stringify({
+        accountName: name,
+        provider: providerInput.value,
+        apiUrl: apiUrlInput.value.trim(),
+        model: modelInput.value.trim(),
+        apiKey: apiKeyInput.value.trim()
+      }));
+      return true;
+    }
+
+    function loadActiveAccount() {
+      const name = localStorage.getItem("task-starter-active-account");
+      if (!name) {
+        updateRuntimeStatus();
+        return;
+      }
+      const raw = localStorage.getItem(accountStorageKey(name));
+      if (!raw) {
+        updateRuntimeStatus();
+        return;
+      }
+      try {
+        const config = JSON.parse(raw);
+        activeAccountName = config.accountName || name;
+        accountNameInput.value = activeAccountName;
+        providerInput.value = config.provider || "chatgpt";
+        apiUrlInput.value = config.apiUrl || aiPresets.chatgpt.apiUrl;
+        modelInput.value = config.model || aiPresets.chatgpt.model;
+        apiKeyInput.value = config.apiKey || "";
+      } catch (error) {
+        activeAccountName = "";
+      }
+      updateRuntimeStatus();
+    }
+
+    function openTermsOrAccount() {
+      if (localStorage.getItem("task-starter-terms-agreed") === "yes") {
+        accountModal.hidden = false;
+      } else {
+        termsModal.hidden = false;
+      }
+    }
+
+    function closeTerms() {
+      termsModal.hidden = true;
+    }
+
+    function agreeTerms() {
+      localStorage.setItem("task-starter-terms-agreed", "yes");
+      termsModal.hidden = true;
+      accountModal.hidden = false;
+    }
+
+    function closeAccount() {
+      accountModal.hidden = true;
+    }
+
     async function verifyApi() {
+      if (!saveAccountConfig()) return;
       verifyApiBtn.disabled = true;
       verifyApiBtn.textContent = "验证中";
       setApiStatus("正在验证 API...");
@@ -1318,11 +1554,14 @@
         await validateAi();
         aiVerified = true;
         setApiStatus(`已验证：${providerInput.options[providerInput.selectedIndex].text} / ${modelInput.value.trim()}`, "ok");
-        aiConfigDetails.open = false;
+        saveAccountConfig();
+        updateRuntimeStatus();
+        accountModal.hidden = true;
         showToast("API 验证通过");
       } catch (error) {
         aiVerified = false;
         setApiStatus("验证失败，当前使用本地识别", "error");
+        updateRuntimeStatus();
         showToast("API 验证失败");
       } finally {
         verifyApiBtn.disabled = false;
@@ -1472,10 +1711,21 @@
     }
 
     providerInput.addEventListener("change", () => applyProviderPreset(providerInput.value));
+    accountNameInput.addEventListener("input", resetApiVerification);
     apiUrlInput.addEventListener("input", resetApiVerification);
     modelInput.addEventListener("input", resetApiVerification);
     apiKeyInput.addEventListener("input", resetApiVerification);
     verifyApiBtn.addEventListener("click", verifyApi);
+    document.querySelector("#openAiSetupBtn").addEventListener("click", openTermsOrAccount);
+    document.querySelector("#cancelTermsBtn").addEventListener("click", closeTerms);
+    document.querySelector("#agreeTermsBtn").addEventListener("click", agreeTerms);
+    document.querySelector("#closeAccountBtn").addEventListener("click", closeAccount);
+    termsModal.addEventListener("click", event => {
+      if (event.target === termsModal) closeTerms();
+    });
+    accountModal.addEventListener("click", event => {
+      if (event.target === accountModal) closeAccount();
+    });
     [taskInput, sourceInput, deadlineInput, peopleInput, worryInput].forEach(input => {
       input.addEventListener("input", () => {
         document.querySelector("#generateBtn").textContent = "生成报告";
@@ -1501,6 +1751,7 @@
     document.querySelector("#exportWordBtn").addEventListener("click", exportWord);
     document.querySelector("#exportExcelBtn").addEventListener("click", exportExcel);
     document.querySelector("#printBtn").addEventListener("click", () => window.print());
+    loadActiveAccount();
   </script>
 </body>
 </html>
