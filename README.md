@@ -1,8 +1,8 @@
-# 一句话任务问法助手
+# 揣摩一下
 
-[English](#task-question-helper)
+[English](#read-between-tasks)
 
-一个面向项目负责人的静态网页工具，用于拆解一句话任务，并生成更好开口的关键问法。
+一个面向项目负责人的静态网页工具，用于拆解一句话的任务，寻找更好开口的问法。
 
 核心输出：
 
@@ -75,11 +75,11 @@
 
 ---
 
-# Task Question Helper
+# Read Between Tasks
 
-[中文](#一句话任务问法助手)
+[中文](#揣摩一下)
 
-Task Question Helper is a static web tool for project owners who receive vague or one-sentence assignments. It breaks down the task and generates clearer, easier-to-ask questions.
+Read Between Tasks is a static web tool for project owners who receive vague or one-sentence assignments. It breaks down the task and generates clearer, easier-to-ask questions.
 
 Core outputs:
 
