@@ -531,7 +531,7 @@
 
     .question-card-head {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
@@ -539,9 +539,10 @@
 
     .question-card-title {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
       min-width: 0;
+      flex: 1 1 420px;
     }
 
     .question-index {
@@ -564,10 +565,19 @@
     }
 
     .question-wording {
-      border-left: 3px solid var(--primary);
-      padding: 3px 0 3px 10px;
-      color: #193963;
-      font-size: 13px;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .question-purpose,
+    .question-foot {
+      padding-left: 32px;
+      color: var(--muted);
+      font-size: 12px;
       line-height: 1.55;
       overflow-wrap: anywhere;
       word-break: break-word;
@@ -586,6 +596,21 @@
       content: "·";
       margin-right: 8px;
       color: #98a2b3;
+    }
+
+    .question-status {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex: 0 0 auto;
+    }
+
+    .question-status .tag {
+      min-width: auto;
+      height: 26px;
+      border-radius: 999px;
     }
 
     .record-advice {
@@ -617,32 +642,6 @@
       color: #344054;
       font-weight: 750;
       user-select: none;
-    }
-
-    .action-script {
-      border: 1px solid #bfd4ff;
-      border-left: 4px solid var(--primary);
-      border-radius: 8px;
-      background: var(--blue-soft);
-      padding: 14px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .action-script h4 {
-      margin: 0;
-      color: #193963;
-      font-size: 13px;
-    }
-
-    .action-script .script-box {
-      border: 0;
-      background: transparent;
-      padding: 0;
-      color: #193963;
-      font-size: 16px;
-      font-weight: 750;
-      line-height: 1.7;
     }
 
     table {
@@ -993,8 +992,7 @@
       .understanding,
       .risk,
       .script-box,
-      .info-box,
-      .question-wording {
+      .info-box {
         padding: 11px;
         font-size: 13px;
       }
@@ -1195,7 +1193,7 @@
             <span>留痕</span>
           </div>
           <div class="toolbar">
-            <button class="tool-button" id="copyScriptBtn" type="button">复制确认话术</button>
+            <button class="tool-button" id="copyScriptBtn" type="button">复制建议问法</button>
             <button class="tool-button" id="copyReportBtn" type="button">复制报告</button>
             <button class="tool-button" id="exportWordBtn" type="button">导出 Word</button>
             <button class="tool-button" id="exportExcelBtn" type="button">导出 Excel</button>
@@ -1373,7 +1371,7 @@
         methodThink: "三思",
         methodAsk: "慎问",
         methodRecord: "记录",
-        copyScript: "复制确认话术",
+        copyScript: "复制建议问法",
         copyReport: "复制报告",
         exportWord: "导出 Word",
         exportExcel: "导出 Excel",
@@ -1405,13 +1403,13 @@
         reportTitle: "任务启动小报告",
         thinkSmall: "形成待确认理解",
         askSmall: "少问，问准，对方愿意答",
-        askLeadTitle: "下一步，先这样问",
-        askLeadSmall: "先拿这段话去确认",
+        askLeadTitle: "建议优先问这几句",
+        askLeadSmall: "不超过 5 个关键问题",
         keyQuestionsTitle: "关键问题清单",
         keyQuestionsSmall: "必要时逐条补问",
         whyAsk: "为什么要问",
-        evidenceTitle: "提问依据",
-        evidenceSmall: "为什么这样问",
+        evidenceTitle: "问题来源",
+        evidenceSmall: "三思后的拆解",
         currentUnderstandingTitle: "项目负责人当前理解",
         recordAdviceTitle: "确认后简单记录",
         recordAdviceText: "建议只轻量保留：原始任务原话、已确认的关键问题、确认对象和时间。这里不做正式留痕，只提醒后续对齐。",
@@ -1468,7 +1466,7 @@
         methodThink: "Think",
         methodAsk: "Ask",
         methodRecord: "Note",
-        copyScript: "Copy wording",
+        copyScript: "Copy suggested questions",
         copyReport: "Copy report",
         exportWord: "Export Word",
         exportExcel: "Export Excel",
@@ -1500,13 +1498,13 @@
         reportTitle: "Task Kickoff Report",
         thinkSmall: "Draft an understanding to confirm",
         askSmall: "Ask less, ask better, make it easy to answer",
-        askLeadTitle: "Next, Ask This Way",
-        askLeadSmall: "Use this first to confirm direction",
+        askLeadTitle: "Suggested Questions First",
+        askLeadSmall: "No more than 5 key questions",
         keyQuestionsTitle: "Key Questions",
         keyQuestionsSmall: "Ask one by one if needed",
         whyAsk: "Why ask",
-        evidenceTitle: "Reasoning Basis",
-        evidenceSmall: "Why these questions were chosen",
+        evidenceTitle: "Question Source",
+        evidenceSmall: "Breakdown after thinking first",
         currentUnderstandingTitle: "Project Owner's Current Understanding",
         recordAdviceTitle: "Simple Note After Confirmation",
         recordAdviceText: "Lightly keep the original task wording, confirmed key questions, confirmation owner, and time. This is only a reminder for later alignment.",
@@ -1646,7 +1644,7 @@
     function getTaskFocus(task) {
       return task
         .replace(/[。！？!?；;，,]+$/g, "")
-        .replace(/^(请|麻烦|帮我|帮忙|尽快|月底前|本周内|下个月|今天|明天|把)/, "")
+        .replace(/^(?:(?:请|麻烦|帮我|帮忙|想想|尽快|月底前|本周内|下个月|今天|明天|把))+/, "")
         .trim()
         .slice(0, 28) || "本次任务";
     }
@@ -1991,7 +1989,7 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
 
       const report = normalizeReport(aiReport, fallback, task);
       const { understanding, scope, deliverables, taskBreakdown, risk, questions, script, checklist } = report;
-      lastScript = script;
+      lastScript = makeSuggestedQuestionsText(questions);
 
       lastReportText = makePlainText({
         task, source, deadline,
@@ -2022,14 +2020,7 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
           <section class="section">
             <h3 class="section-title">${escapeHtml(t("askLeadTitle"))} <small>${escapeHtml(t("askLeadSmall"))}</small></h3>
             <div class="section-content">
-              <div class="action-script">
-                <h4>${escapeHtml(t("scriptTitle"))}</h4>
-                <div class="script-box">${escapeHtml(script)}</div>
-              </div>
-              <div>
-                <h4>${escapeHtml(t("keyQuestionsTitle"))}</h4>
-                ${questionCards(questions)}
-              </div>
+              ${questionCards(questions)}
               ${recordAdvice(checklist)}
             </div>
           </section>
@@ -2100,14 +2091,16 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
               <div class="question-card-head">
                 <div class="question-card-title">
                   <span class="question-index">${index + 1}</span>
-                  <div class="question-item">${escapeHtml(q.item)}</div>
+                  <div class="question-wording">${escapeHtml(q.wording)}</div>
                 </div>
-                ${priorityTag(q.priority)}
+                <div class="question-status">
+                  ${criticalityTag(q.priority)}
+                  ${necessityTag(q.upward)}
+                </div>
               </div>
-              <div class="question-wording">${escapeHtml(q.wording)}</div>
+              <div class="question-purpose">${escapeHtml(q.item)}</div>
               <div class="question-foot">
                 <span>${escapeHtml(t("target"))}：${escapeHtml(q.target)}</span>
-                <span>${escapeHtml(t("upward"))}：${escapeHtml(q.upward)}</span>
               </div>
             </article>
           `).join("")}
@@ -2178,6 +2171,19 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
       return `<span class="tag ${map[value] || "wait"}">${value}</span>`;
     }
 
+    function criticalityTag(value) {
+      const label = currentLang === "en" ? "Criticality" : "关键度";
+      const className = value === "高" || value === "High" ? "high" : value === "低" || value === "Low" ? "wait" : "medium";
+      return `<span class="tag ${className}">${escapeHtml(label)}：${escapeHtml(value)}</span>`;
+    }
+
+    function necessityTag(value) {
+      const label = currentLang === "en" ? "Need" : "确认必要性";
+      const map = { "必须": "must", "建议": "suggest", "可暂缓": "wait", "无需": "wait", "Required": "must", "Recommended": "suggest", "Can wait": "wait", "Not needed": "wait" };
+      const displayValue = value === "可暂缓" ? "暂缓" : value === "Can wait" ? "Defer" : value;
+      return `<span class="tag ${map[value] || "wait"}">${escapeHtml(label)}：${escapeHtml(displayValue)}</span>`;
+    }
+
     function makePlainText(data) {
       const questionText = data.questions.map((q, index) =>
         `${index + 1}. ${q.item}\n${t("priority")}：${q.priority}\n${t("target")}：${q.target}\n${t("wording")}：${q.wording}\n${t("upward")}：${q.upward}`
@@ -2203,10 +2209,14 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
         `二、${t("methodAsk")}`,
         questionText,
         "",
-        `${t("scriptTitle")}：${data.script}`,
-        "",
         `${t("checklistTitle")}：\n${data.checklist.map(item => `- ${item}`).join("\n")}`
       ].join("\n");
+    }
+
+    function makeSuggestedQuestionsText(questions) {
+      return questions.map((q, index) =>
+        `${index + 1}. ${q.wording}\n${q.item}\n${t("target")}：${q.target}\n${t("priority")}：${q.priority}\n${t("upward")}：${q.upward}`
+      ).join("\n\n");
     }
 
     async function copyText(text, emptyMessage) {
@@ -2399,7 +2409,7 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
       sourceInput.value = report.source || "上级";
       deadlineInput.value = report.deadline || "明天上午例会前";
       currentReport = report;
-      lastScript = report.script || "";
+      lastScript = makeSuggestedQuestionsText(report.questions || []);
       lastReportText = report.plainText || "";
       renderReport(report);
       closeHistory();
@@ -2445,7 +2455,6 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
         ...currentReport.taskBreakdown.map(item => [t("breakdownTitle"), item.flow || "", item.milestone || "", item.deliverable || ""]),
         [currentReport.risk.title, currentReport.risk.body, "", ""],
         ...currentReport.questions.map(item => [t("methodAsk"), item.item, item.target, item.wording]),
-        [t("scriptTitle"), currentReport.script, "", ""],
         ...currentReport.checklist.map(item => [t("checklistTitle"), item, "", ""])
       ];
       const csv = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(",")).join("\n");
