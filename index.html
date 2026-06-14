@@ -105,16 +105,6 @@
       letter-spacing: 0;
     }
 
-    .brand p {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .brand p:empty {
-      display: none;
-    }
-
     .brand-purpose {
       margin-top: 6px;
       color: #475467;
@@ -927,7 +917,6 @@
         font-size: 17px;
       }
 
-      .brand p,
       .hint,
       .ai-entry span {
         font-size: 12px;
@@ -1126,7 +1115,6 @@
         <div class="brand-mark" aria-hidden="true"></div>
         <div>
           <h1>揣摩一下</h1>
-          <p></p>
           <div class="brand-purpose">拆解一句话的任务，寻找更好开口的问法。</div>
         </div>
       </div>
@@ -1349,7 +1337,6 @@
     const i18n = {
       zh: {
         appTitle: "揣摩一下",
-        appSubtitle: "",
         appPurpose: "拆解一句话的任务，寻找更好开口的问法。",
         languageHint: "界面语言",
         taskLabel: "一句话任务",
@@ -1444,7 +1431,6 @@
       },
       en: {
         appTitle: "Read Between Tasks",
-        appSubtitle: "",
         appPurpose: "Break down one-sentence tasks and find better ways to ask.",
         languageHint: "Language",
         taskLabel: "One-sentence task",
@@ -1557,7 +1543,6 @@
       document.documentElement.lang = currentLang === "en" ? "en" : "zh-CN";
       document.title = t("appTitle");
       setText(".brand h1", t("appTitle"));
-      setText(".brand p", t("appSubtitle"));
       setText(".brand-purpose", t("appPurpose"));
       setText("#languageHint", t("languageHint"));
       labelFor("taskInput", t("taskLabel"));
