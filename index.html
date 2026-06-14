@@ -515,6 +515,127 @@
       word-break: break-word;
     }
 
+    .question-cards {
+      display: grid;
+      gap: 12px;
+    }
+
+    .question-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .question-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .question-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .question-index {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      background: var(--blue-soft);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .question-item {
+      font-weight: 750;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .question-wording {
+      border-left: 4px solid var(--primary);
+      background: var(--blue-soft);
+      border-radius: 8px;
+      padding: 13px 14px;
+      color: #193963;
+      font-size: 15px;
+      font-weight: 750;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .question-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .question-meta-item {
+      border: 1px solid var(--soft-line);
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: #f8fafc;
+      min-width: 0;
+      font-size: 12px;
+    }
+
+    .question-meta-item span {
+      display: block;
+      color: var(--muted);
+      font-weight: 650;
+      margin-bottom: 4px;
+    }
+
+    .question-meta-item strong {
+      color: #344054;
+      font-weight: 750;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .record-advice {
+      border-top: 1px solid var(--soft-line);
+      padding-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .record-advice strong {
+      display: block;
+      color: #344054;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .evidence-details {
+      border: 1px solid var(--soft-line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .evidence-details summary {
+      cursor: pointer;
+      padding: 11px 14px;
+      background: #f8fafc;
+      color: #344054;
+      font-weight: 750;
+      user-select: none;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -863,9 +984,18 @@
       .understanding,
       .risk,
       .script-box,
-      .info-box {
+      .info-box,
+      .question-wording {
         padding: 11px;
         font-size: 13px;
+      }
+
+      .question-card {
+        padding: 12px;
+      }
+
+      .question-meta {
+        grid-template-columns: 1fr;
       }
 
       .info-box h4 {
@@ -990,7 +1120,7 @@
         <div>
           <h1>一句话任务启动助手</h1>
           <p>三思，慎问，留痕</p>
-          <div class="brand-purpose">帮项目负责人把一句话任务，快速整理成可确认、可推进、可留痕的启动小报告。</div>
+          <div class="brand-purpose">帮你把领导的一句话任务，拆成初步思路、关键问题和更好开口的问法。</div>
         </div>
       </div>
 
@@ -1217,8 +1347,8 @@
     const i18n = {
       zh: {
         appTitle: "一句话任务启动助手",
-        appSubtitle: "三思，慎问，留痕",
-        appPurpose: "帮项目负责人把一句话任务，快速整理成可确认、可推进、可留痕的启动小报告。",
+        appSubtitle: "三思，慎问，记录",
+        appPurpose: "帮你把领导的一句话任务，拆成初步思路、关键问题和更好开口的问法。",
         languageHint: "界面语言",
         taskLabel: "一句话任务",
         taskPlaceholder: "例如：下个月把新员工培训搞起来",
@@ -1237,14 +1367,14 @@
         generating: "生成中",
         methodThink: "三思",
         methodAsk: "慎问",
-        methodRecord: "留痕",
+        methodRecord: "记录",
         copyScript: "复制确认话术",
         copyReport: "复制报告",
         exportWord: "导出 Word",
         exportExcel: "导出 Excel",
         print: "打印/导出",
         emptyTitle: "填入一句话任务，生成启动小报告",
-        emptyText: "报告会重点给出任务拆解、3-5 个慎问问题，以及书面记录 checklist。",
+        emptyText: "报告会重点给出初步拆解、3-5 个慎问问题，以及更好开口的建议问法。",
         usageTitle: "使用说明与隐私声明",
         usageText: "本应用采用本机账号模式，不需要注册，也不提供云端账号。你输入的账号名仅用于在当前浏览器中区分本机配置。本应用不提供云端存储。你的内容、配置、使用记录和 API Key 仅保存在当前浏览器中。我们不会收集、保存、分析或追踪你的任何使用行为、输入内容、生成结果或 API Key。API Key 由你自己提供，模型费用由你的模型服务商账户承担。请勿在公共设备上保存 API Key。",
         copyrightTitle: "版权声明",
@@ -1269,7 +1399,15 @@
         agreeTerms: "同意并继续",
         reportTitle: "任务启动小报告",
         thinkSmall: "形成待确认理解",
-        askSmall: "少问，问准，留痕",
+        askSmall: "少问，问准，对方愿意答",
+        askLeadTitle: "建议先问这几句",
+        askLeadSmall: "优先抓住必须确认的问题",
+        whyAsk: "为什么要问",
+        evidenceTitle: "提问依据",
+        evidenceSmall: "三思后的拆解结果",
+        currentUnderstandingTitle: "项目负责人当前理解",
+        recordAdviceTitle: "确认后简单记录",
+        recordAdviceText: "建议只轻量保留：原始任务原话、已确认的关键问题、确认对象和时间。这里不做正式留痕，只提醒后续对齐。",
         scopeTitle: "可能的任务边界",
         deliverableTitle: "初步交付物方向",
         breakdownTitle: "任务拆解",
@@ -1302,8 +1440,8 @@
       },
       en: {
         appTitle: "Task Starter Assistant",
-        appSubtitle: "Think, Ask, Record",
-        appPurpose: "Help project owners turn one-sentence assignments into confirmable, actionable, recordable kickoff reports.",
+        appSubtitle: "Think, Ask, Note",
+        appPurpose: "Help you turn a manager's vague assignment into an initial path, key questions, and better wording.",
         languageHint: "Language",
         taskLabel: "One-sentence task",
         taskPlaceholder: "Example: Launch onboarding training next month",
@@ -1322,14 +1460,14 @@
         generating: "Generating",
         methodThink: "Think",
         methodAsk: "Ask",
-        methodRecord: "Record",
+        methodRecord: "Note",
         copyScript: "Copy wording",
         copyReport: "Copy report",
         exportWord: "Export Word",
         exportExcel: "Export Excel",
         print: "Print/Export",
         emptyTitle: "Enter a task to generate a kickoff report",
-        emptyText: "The report will include a task breakdown, 3-5 careful questions, and a record checklist.",
+        emptyText: "The report will include an initial breakdown, 3-5 careful questions, and better suggested wording.",
         usageTitle: "Usage and Privacy Notice",
         usageText: "This app uses a local account mode. It does not require registration or provide cloud accounts. The account name is only used to distinguish local configurations in the current browser. The app does not provide cloud storage. Your content, configuration, usage records, and API key are stored only in the current browser. We do not collect, store, analyze, or track your behavior, input, generated results, or API key. API keys are provided by you, and model usage fees are charged by your own model provider account. Do not save API keys on public devices.",
         copyrightTitle: "Copyright Notice",
@@ -1354,7 +1492,15 @@
         agreeTerms: "Agree and continue",
         reportTitle: "Task Kickoff Report",
         thinkSmall: "Draft an understanding to confirm",
-        askSmall: "Ask less, ask better, keep records",
+        askSmall: "Ask less, ask better, make it easy to answer",
+        askLeadTitle: "Ask These First",
+        askLeadSmall: "Focus on the questions that must be confirmed",
+        whyAsk: "Why ask",
+        evidenceTitle: "Reasoning Basis",
+        evidenceSmall: "Breakdown after thinking first",
+        currentUnderstandingTitle: "Project Owner's Current Understanding",
+        recordAdviceTitle: "Simple Note After Confirmation",
+        recordAdviceText: "Lightly keep the original task wording, confirmed key questions, confirmation owner, and time. This is only a reminder for later alignment.",
         scopeTitle: "Possible Task Boundaries",
         deliverableTitle: "Initial Deliverable Direction",
         breakdownTitle: "Task Breakdown",
@@ -1845,7 +1991,16 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
       currentReport = { task, source, deadline, createdAt: new Date().toISOString(), ...report, plainText: lastReportText };
       saveHistory(currentReport);
 
-      reportEl.innerHTML = `
+      reportEl.innerHTML = reportMarkup({
+        task, source, deadline,
+        understanding, scope, deliverables, taskBreakdown, risk, questions, script, checklist
+      });
+      generateBtn.textContent = t("generated");
+    }
+
+    function reportMarkup(report) {
+      const { task, source, deadline, understanding, scope, deliverables, taskBreakdown, risk, questions, script, checklist } = report;
+      return `
         <div class="report-body">
           <header class="report-header">
             <div class="report-title">
@@ -1856,9 +2011,27 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
           </header>
 
           <section class="section">
-            <h3 class="section-title">${escapeHtml(t("methodThink"))} <small>${escapeHtml(t("thinkSmall"))}</small></h3>
+            <h3 class="section-title">${escapeHtml(t("currentUnderstandingTitle"))} <small>${escapeHtml(t("thinkSmall"))}</small></h3>
             <div class="section-content">
               <div class="understanding">${escapeHtml(understanding)}</div>
+            </div>
+          </section>
+
+          <section class="section">
+            <h3 class="section-title">${escapeHtml(t("askLeadTitle"))} <small>${escapeHtml(t("askLeadSmall"))}</small></h3>
+            <div class="section-content">
+              ${questionCards(questions)}
+              <div>
+                <h4>${escapeHtml(t("scriptTitle"))}</h4>
+                <div class="script-box">${escapeHtml(script)}</div>
+              </div>
+              ${recordAdvice(checklist)}
+            </div>
+          </section>
+
+          <details class="evidence-details">
+            <summary>${escapeHtml(t("evidenceTitle"))} · ${escapeHtml(t("evidenceSmall"))}</summary>
+            <div class="section-content">
               <div class="grid-3">
                 ${listBox(t("scopeTitle"), scope)}
                 ${listBox(t("deliverableTitle"), deliverables)}
@@ -1869,22 +2042,9 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
               </div>
               ${taskBreakdownTable(taskBreakdown)}
             </div>
-          </section>
-
-          <section class="section">
-            <h3 class="section-title">${escapeHtml(t("methodAsk"))} <small>${escapeHtml(t("askSmall"))}</small></h3>
-            <div class="section-content">
-              ${questionTable(questions)}
-              <div>
-                <h4>${escapeHtml(t("scriptTitle"))}</h4>
-                <div class="script-box">${escapeHtml(script)}</div>
-              </div>
-              ${checklistTable(checklist)}
-            </div>
-          </section>
+          </details>
         </div>
       `;
-      generateBtn.textContent = t("generated");
     }
 
     function listBox(title, items) {
@@ -1920,6 +2080,39 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
             `).join("")}
           </tbody>
         </table>
+      `;
+    }
+
+    function questionCards(questions) {
+      return `
+        <div class="question-cards">
+          ${questions.map((q, index) => `
+            <article class="question-card">
+              <div class="question-card-head">
+                <div class="question-card-title">
+                  <span class="question-index">${index + 1}</span>
+                  <div class="question-item">${escapeHtml(q.item)}</div>
+                </div>
+                ${priorityTag(q.priority)}
+              </div>
+              <div class="question-wording">${escapeHtml(q.wording)}</div>
+              <div class="question-meta">
+                <div class="question-meta-item">
+                  <span>${escapeHtml(t("whyAsk"))}</span>
+                  <strong>${escapeHtml(q.item)}</strong>
+                </div>
+                <div class="question-meta-item">
+                  <span>${escapeHtml(t("target"))}</span>
+                  <strong>${escapeHtml(q.target)}</strong>
+                </div>
+                <div class="question-meta-item">
+                  <span>${escapeHtml(t("upward"))}</span>
+                  <strong>${upwardTag(q.upward)}</strong>
+                </div>
+              </div>
+            </article>
+          `).join("")}
+        </div>
       `;
     }
 
@@ -1963,6 +2156,15 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
               `).join("")}
             </tbody>
           </table>
+        </div>
+      `;
+    }
+
+    function recordAdvice(items) {
+      return `
+        <div class="record-advice">
+          <strong>${escapeHtml(t("recordAdviceTitle"))}</strong>
+          <span>${escapeHtml(t("recordAdviceText"))}</span>
         </div>
       `;
     }
@@ -2206,46 +2408,7 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
     }
 
     function renderReport(report) {
-      const { task, source, deadline, understanding, scope, deliverables, taskBreakdown, risk, questions, script, checklist } = report;
-      reportEl.innerHTML = `
-        <div class="report-body">
-          <header class="report-header">
-            <div class="report-title">
-              <h2>${escapeHtml(t("reportTitle"))}</h2>
-              <p>${escapeHtml(task)}</p>
-            </div>
-            <div class="source-pill">${escapeHtml(source)} · ${escapeHtml(deadline)}</div>
-          </header>
-
-          <section class="section">
-            <h3 class="section-title">${escapeHtml(t("methodThink"))} <small>${escapeHtml(t("thinkSmall"))}</small></h3>
-            <div class="section-content">
-              <div class="understanding">${escapeHtml(understanding)}</div>
-              <div class="grid-3">
-                ${listBox(t("scopeTitle"), scope)}
-                ${listBox(t("deliverableTitle"), deliverables)}
-                <div class="info-box">
-                  <h4>${escapeHtml(risk.title)}</h4>
-                  <div class="risk">${escapeHtml(risk.body)}</div>
-                </div>
-              </div>
-              ${taskBreakdownTable(taskBreakdown)}
-            </div>
-          </section>
-
-          <section class="section">
-            <h3 class="section-title">${escapeHtml(t("methodAsk"))} <small>${escapeHtml(t("askSmall"))}</small></h3>
-            <div class="section-content">
-              ${questionTable(questions)}
-              <div>
-                <h4>${escapeHtml(t("scriptTitle"))}</h4>
-                <div class="script-box">${escapeHtml(script)}</div>
-              </div>
-              ${checklistTable(checklist)}
-            </div>
-          </section>
-        </div>
-      `;
+      reportEl.innerHTML = reportMarkup(report);
     }
 
     function downloadFile(filename, mimeType, content) {
