@@ -1187,11 +1187,6 @@
     <main class="main">
       <div class="main-head">
         <div class="topbar">
-          <div class="method" aria-label="方法">
-            <span>三思</span>
-            <span>慎问</span>
-            <span>留痕</span>
-          </div>
           <div class="toolbar">
             <button class="tool-button" id="copyScriptBtn" type="button">复制建议问法</button>
             <button class="tool-button" id="copyReportBtn" type="button">复制报告</button>
@@ -1400,19 +1395,19 @@
         close: "关闭",
         cancelTerms: "暂不启用",
         agreeTerms: "同意并继续",
-        reportTitle: "任务启动小报告",
+        reportTitle: "优先问问这几句",
         thinkSmall: "形成待确认理解",
         askSmall: "少问，问准，对方愿意答",
-        askLeadTitle: "建议优先问这几句",
-        askLeadSmall: "不超过 5 个关键问题",
+        askLeadTitle: "优先问问这几句",
+        askLeadSmall: "",
         keyQuestionsTitle: "关键问题清单",
         keyQuestionsSmall: "必要时逐条补问",
         whyAsk: "为什么要问",
-        evidenceTitle: "问题来源",
-        evidenceSmall: "三思后的拆解",
+        evidenceTitle: "任务拆解",
+        evidenceSmall: "",
         currentUnderstandingTitle: "项目负责人当前理解",
-        recordAdviceTitle: "确认后简单记录",
-        recordAdviceText: "建议只轻量保留：原始任务原话、已确认的关键问题、确认对象和时间。这里不做正式留痕，只提醒后续对齐。",
+        recordAdviceTitle: "",
+        recordAdviceText: "记得留痕哟！",
         scopeTitle: "可能的任务边界",
         deliverableTitle: "初步交付物方向",
         breakdownTitle: "任务拆解",
@@ -1495,19 +1490,19 @@
         close: "Close",
         cancelTerms: "Not now",
         agreeTerms: "Agree and continue",
-        reportTitle: "Task Kickoff Report",
+        reportTitle: "Ask These First",
         thinkSmall: "Draft an understanding to confirm",
         askSmall: "Ask less, ask better, make it easy to answer",
-        askLeadTitle: "Suggested Questions First",
-        askLeadSmall: "No more than 5 key questions",
+        askLeadTitle: "Ask These First",
+        askLeadSmall: "",
         keyQuestionsTitle: "Key Questions",
         keyQuestionsSmall: "Ask one by one if needed",
         whyAsk: "Why ask",
-        evidenceTitle: "Question Source",
-        evidenceSmall: "Breakdown after thinking first",
+        evidenceTitle: "Task Breakdown",
+        evidenceSmall: "",
         currentUnderstandingTitle: "Project Owner's Current Understanding",
-        recordAdviceTitle: "Simple Note After Confirmation",
-        recordAdviceText: "Lightly keep the original task wording, confirmed key questions, confirmation owner, and time. This is only a reminder for later alignment.",
+        recordAdviceTitle: "",
+        recordAdviceText: "Remember to keep a quick record.",
         scopeTitle: "Possible Task Boundaries",
         deliverableTitle: "Initial Deliverable Direction",
         breakdownTitle: "Task Breakdown",
@@ -1585,10 +1580,6 @@
       setText("#openAiSetupBtn", t("enableAi"));
       setText("#historyBtn", t("history"));
       setText("#generateBtn", currentReport ? t("generated") : t("generate"));
-      const methodItems = document.querySelectorAll(".method span");
-      if (methodItems[0]) methodItems[0].textContent = t("methodThink");
-      if (methodItems[1]) methodItems[1].textContent = t("methodAsk");
-      if (methodItems[2]) methodItems[2].textContent = t("methodRecord");
       setText("#copyScriptBtn", t("copyScript"));
       setText("#copyReportBtn", t("copyReport"));
       setText("#exportWordBtn", t("exportWord"));
@@ -2012,13 +2003,11 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
           <header class="report-header">
             <div class="report-title">
               <h2>${escapeHtml(t("reportTitle"))}</h2>
-              <p>${escapeHtml(task)}</p>
             </div>
             <div class="source-pill">${escapeHtml(source)} · ${escapeHtml(deadline)}</div>
           </header>
 
           <section class="section">
-            <h3 class="section-title">${escapeHtml(t("askLeadTitle"))} <small>${escapeHtml(t("askLeadSmall"))}</small></h3>
             <div class="section-content">
               ${questionCards(questions)}
               ${recordAdvice(checklist)}
@@ -2026,11 +2015,11 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
           </section>
 
           <details class="evidence-details">
-            <summary>${escapeHtml(t("evidenceTitle"))} · ${escapeHtml(t("evidenceSmall"))}</summary>
+            <summary>${escapeHtml(t("evidenceTitle"))}</summary>
             <div class="section-content">
               <div>
                 <h4>${escapeHtml(t("currentUnderstandingTitle"))}</h4>
-                <div class="understanding">${escapeHtml(understanding)}</div>
+                <div class="understanding">${escapeHtml(cleanUnderstanding(understanding))}</div>
               </div>
               <div class="grid-3">
                 ${listBox(t("scopeTitle"), scope)}
@@ -2155,10 +2144,16 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
     function recordAdvice(items) {
       return `
         <div class="record-advice">
-          <strong>${escapeHtml(t("recordAdviceTitle"))}</strong>
           <span>${escapeHtml(t("recordAdviceText"))}</span>
         </div>
       `;
+    }
+
+    function cleanUnderstanding(value) {
+      return String(value || "")
+        .replace(/^(我目前理解，|项目负责人当前理解[：:，,]?|项目负责人理解到[：:，,]?|负责人理解到[：:，,]?)/, "")
+        .replace(/^(My current understanding is that\s*)/i, "")
+        .trim();
     }
 
     function priorityTag(value) {
@@ -2200,7 +2195,7 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
         `${t("deadlineLabel")}：${data.deadline}`,
         "",
         `一、${t("methodThink")}`,
-        `${t("thinkSmall")}：${data.understanding}`,
+        `${t("thinkSmall")}：${cleanUnderstanding(data.understanding)}`,
         `${t("scopeTitle")}：\n${data.scope.map(item => `- ${item}`).join("\n")}`,
         `${t("deliverableTitle")}：\n${(data.deliverables || []).map(item => `- ${item}`).join("\n")}`,
         `${t("breakdownTitle")}：\n${breakdownText}`,
