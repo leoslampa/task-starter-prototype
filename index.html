@@ -517,16 +517,16 @@
 
     .question-cards {
       display: grid;
-      gap: 12px;
+      gap: 10px;
     }
 
     .question-card {
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fff;
-      padding: 14px;
+      padding: 12px;
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
     .question-card-head {
@@ -564,45 +564,28 @@
     }
 
     .question-wording {
-      border-left: 4px solid var(--primary);
-      background: var(--blue-soft);
-      border-radius: 8px;
-      padding: 13px 14px;
+      border-left: 3px solid var(--primary);
+      padding: 3px 0 3px 10px;
       color: #193963;
-      font-size: 15px;
-      font-weight: 750;
-      line-height: 1.65;
+      font-size: 13px;
+      line-height: 1.55;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
 
-    .question-meta {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .question-foot {
+      display: flex;
+      align-items: center;
       gap: 8px;
-    }
-
-    .question-meta-item {
-      border: 1px solid var(--soft-line);
-      border-radius: 8px;
-      padding: 9px 10px;
-      background: #f8fafc;
-      min-width: 0;
+      flex-wrap: wrap;
+      color: var(--muted);
       font-size: 12px;
     }
 
-    .question-meta-item span {
-      display: block;
-      color: var(--muted);
-      font-weight: 650;
-      margin-bottom: 4px;
-    }
-
-    .question-meta-item strong {
-      color: #344054;
-      font-weight: 750;
-      overflow-wrap: anywhere;
-      word-break: break-word;
+    .question-foot span + span::before {
+      content: "·";
+      margin-right: 8px;
+      color: #98a2b3;
     }
 
     .record-advice {
@@ -634,6 +617,32 @@
       color: #344054;
       font-weight: 750;
       user-select: none;
+    }
+
+    .action-script {
+      border: 1px solid #bfd4ff;
+      border-left: 4px solid var(--primary);
+      border-radius: 8px;
+      background: var(--blue-soft);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .action-script h4 {
+      margin: 0;
+      color: #193963;
+      font-size: 13px;
+    }
+
+    .action-script .script-box {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      color: #193963;
+      font-size: 16px;
+      font-weight: 750;
+      line-height: 1.7;
     }
 
     table {
@@ -992,10 +1001,6 @@
 
       .question-card {
         padding: 12px;
-      }
-
-      .question-meta {
-        grid-template-columns: 1fr;
       }
 
       .info-box h4 {
@@ -1400,11 +1405,13 @@
         reportTitle: "任务启动小报告",
         thinkSmall: "形成待确认理解",
         askSmall: "少问，问准，对方愿意答",
-        askLeadTitle: "建议先问这几句",
-        askLeadSmall: "优先抓住必须确认的问题",
+        askLeadTitle: "下一步，先这样问",
+        askLeadSmall: "先拿这段话去确认",
+        keyQuestionsTitle: "关键问题清单",
+        keyQuestionsSmall: "必要时逐条补问",
         whyAsk: "为什么要问",
         evidenceTitle: "提问依据",
-        evidenceSmall: "三思后的拆解结果",
+        evidenceSmall: "为什么这样问",
         currentUnderstandingTitle: "项目负责人当前理解",
         recordAdviceTitle: "确认后简单记录",
         recordAdviceText: "建议只轻量保留：原始任务原话、已确认的关键问题、确认对象和时间。这里不做正式留痕，只提醒后续对齐。",
@@ -1493,11 +1500,13 @@
         reportTitle: "Task Kickoff Report",
         thinkSmall: "Draft an understanding to confirm",
         askSmall: "Ask less, ask better, make it easy to answer",
-        askLeadTitle: "Ask These First",
-        askLeadSmall: "Focus on the questions that must be confirmed",
+        askLeadTitle: "Next, Ask This Way",
+        askLeadSmall: "Use this first to confirm direction",
+        keyQuestionsTitle: "Key Questions",
+        keyQuestionsSmall: "Ask one by one if needed",
         whyAsk: "Why ask",
         evidenceTitle: "Reasoning Basis",
-        evidenceSmall: "Breakdown after thinking first",
+        evidenceSmall: "Why these questions were chosen",
         currentUnderstandingTitle: "Project Owner's Current Understanding",
         recordAdviceTitle: "Simple Note After Confirmation",
         recordAdviceText: "Lightly keep the original task wording, confirmed key questions, confirmation owner, and time. This is only a reminder for later alignment.",
@@ -2011,19 +2020,15 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
           </header>
 
           <section class="section">
-            <h3 class="section-title">${escapeHtml(t("currentUnderstandingTitle"))} <small>${escapeHtml(t("thinkSmall"))}</small></h3>
-            <div class="section-content">
-              <div class="understanding">${escapeHtml(understanding)}</div>
-            </div>
-          </section>
-
-          <section class="section">
             <h3 class="section-title">${escapeHtml(t("askLeadTitle"))} <small>${escapeHtml(t("askLeadSmall"))}</small></h3>
             <div class="section-content">
-              ${questionCards(questions)}
-              <div>
+              <div class="action-script">
                 <h4>${escapeHtml(t("scriptTitle"))}</h4>
                 <div class="script-box">${escapeHtml(script)}</div>
+              </div>
+              <div>
+                <h4>${escapeHtml(t("keyQuestionsTitle"))}</h4>
+                ${questionCards(questions)}
               </div>
               ${recordAdvice(checklist)}
             </div>
@@ -2032,6 +2037,10 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
           <details class="evidence-details">
             <summary>${escapeHtml(t("evidenceTitle"))} · ${escapeHtml(t("evidenceSmall"))}</summary>
             <div class="section-content">
+              <div>
+                <h4>${escapeHtml(t("currentUnderstandingTitle"))}</h4>
+                <div class="understanding">${escapeHtml(understanding)}</div>
+              </div>
               <div class="grid-3">
                 ${listBox(t("scopeTitle"), scope)}
                 ${listBox(t("deliverableTitle"), deliverables)}
@@ -2096,19 +2105,9 @@ Return JSON only. Do not return Markdown or explanations. JSON schema:
                 ${priorityTag(q.priority)}
               </div>
               <div class="question-wording">${escapeHtml(q.wording)}</div>
-              <div class="question-meta">
-                <div class="question-meta-item">
-                  <span>${escapeHtml(t("whyAsk"))}</span>
-                  <strong>${escapeHtml(q.item)}</strong>
-                </div>
-                <div class="question-meta-item">
-                  <span>${escapeHtml(t("target"))}</span>
-                  <strong>${escapeHtml(q.target)}</strong>
-                </div>
-                <div class="question-meta-item">
-                  <span>${escapeHtml(t("upward"))}</span>
-                  <strong>${upwardTag(q.upward)}</strong>
-                </div>
+              <div class="question-foot">
+                <span>${escapeHtml(t("target"))}：${escapeHtml(q.target)}</span>
+                <span>${escapeHtml(t("upward"))}：${escapeHtml(q.upward)}</span>
               </div>
             </article>
           `).join("")}
