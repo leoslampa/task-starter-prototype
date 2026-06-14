@@ -63,7 +63,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding-bottom: 8px;
+      padding-bottom: 12px;
       border-bottom: 1px solid var(--soft-line);
     }
 
@@ -109,6 +109,13 @@
       margin: 4px 0 0;
       color: var(--muted);
       font-size: 13px;
+    }
+
+    .brand-purpose {
+      margin-top: 6px;
+      color: #475467;
+      font-size: 12px;
+      line-height: 1.45;
     }
 
     .field {
@@ -983,6 +990,7 @@
         <div>
           <h1>一句话任务启动助手</h1>
           <p>三思，慎问，留痕</p>
+          <div class="brand-purpose">帮项目负责人把一句话任务，快速整理成可确认、可推进、可留痕的启动小报告。</div>
         </div>
       </div>
 
@@ -1210,6 +1218,7 @@
       zh: {
         appTitle: "一句话任务启动助手",
         appSubtitle: "三思，慎问，留痕",
+        appPurpose: "帮项目负责人把一句话任务，快速整理成可确认、可推进、可留痕的启动小报告。",
         languageHint: "界面语言",
         taskLabel: "一句话任务",
         taskPlaceholder: "例如：下个月把新员工培训搞起来",
@@ -1294,6 +1303,7 @@
       en: {
         appTitle: "Task Starter Assistant",
         appSubtitle: "Think, Ask, Record",
+        appPurpose: "Help project owners turn one-sentence assignments into confirmable, actionable, recordable kickoff reports.",
         languageHint: "Language",
         taskLabel: "One-sentence task",
         taskPlaceholder: "Example: Launch onboarding training next month",
@@ -1396,6 +1406,7 @@
       document.title = t("appTitle");
       setText(".brand h1", t("appTitle"));
       setText(".brand p", t("appSubtitle"));
+      setText(".brand-purpose", t("appPurpose"));
       setText("#languageHint", t("languageHint"));
       labelFor("taskInput", t("taskLabel"));
       taskInput.placeholder = t("taskPlaceholder");
