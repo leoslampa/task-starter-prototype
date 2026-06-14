@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>一句话任务启动助手</title>
+  <title>一句话任务问法助手</title>
   <style>
     :root {
       --bg: #f6f7f9;
@@ -109,6 +109,10 @@
       margin: 4px 0 0;
       color: var(--muted);
       font-size: 13px;
+    }
+
+    .brand p:empty {
+      display: none;
     }
 
     .brand-purpose {
@@ -1121,9 +1125,9 @@
       <div class="brand">
         <div class="brand-mark" aria-hidden="true"></div>
         <div>
-          <h1>一句话任务启动助手</h1>
-          <p>三思，慎问，留痕</p>
-          <div class="brand-purpose">帮你拆解领导的一句话任务，并找到更好开口的问法。</div>
+          <h1>一句话任务问法助手</h1>
+          <p></p>
+          <div class="brand-purpose">帮你拆解一句话任务，并找到更好开口的问法。</div>
         </div>
       </div>
 
@@ -1344,9 +1348,9 @@
 
     const i18n = {
       zh: {
-        appTitle: "一句话任务启动助手",
-        appSubtitle: "三思，慎问，记录",
-        appPurpose: "帮你拆解领导的一句话任务，并找到更好开口的问法。",
+        appTitle: "一句话任务问法助手",
+        appSubtitle: "",
+        appPurpose: "帮你拆解一句话任务，并找到更好开口的问法。",
         languageHint: "界面语言",
         taskLabel: "一句话任务",
         taskPlaceholder: "例如：下个月把新员工培训搞起来",
@@ -1363,9 +1367,9 @@
         generate: "生成报告",
         generated: "已生成",
         generating: "生成中",
-        methodThink: "三思",
-        methodAsk: "慎问",
-        methodRecord: "记录",
+        methodThink: "任务拆解",
+        methodAsk: "优先问法",
+        methodRecord: "",
         copyScript: "复制建议问法",
         copyReport: "复制报告",
         exportWord: "导出 Word",
@@ -1439,9 +1443,9 @@
         accountUnverifiedSuffix: "（未验证）"
       },
       en: {
-        appTitle: "Task Starter Assistant",
-        appSubtitle: "Think, Ask, Note",
-        appPurpose: "Break down a manager's one-sentence task and find better ways to ask.",
+        appTitle: "Task Question Helper",
+        appSubtitle: "",
+        appPurpose: "Break down a one-sentence task and find better ways to ask.",
         languageHint: "Language",
         taskLabel: "One-sentence task",
         taskPlaceholder: "Example: Launch onboarding training next month",
@@ -1458,9 +1462,9 @@
         generate: "Generate report",
         generated: "Generated",
         generating: "Generating",
-        methodThink: "Think",
-        methodAsk: "Ask",
-        methodRecord: "Note",
+        methodThink: "Task Breakdown",
+        methodAsk: "Suggested Questions",
+        methodRecord: "",
         copyScript: "Copy suggested questions",
         copyReport: "Copy report",
         exportWord: "Export Word",
@@ -1714,7 +1718,7 @@
           { flow: "目标确认", milestone: "形成可复述的任务目标", deliverable: "目标与交付物确认记录" },
           { flow: "信息核查", milestone: "补齐影响判断的关键资料", deliverable: "资料清单和缺口说明" },
           { flow: "方案成形", milestone: "形成可讨论的初步推进路径", deliverable: "简要推进方案" },
-          { flow: "确认留痕", milestone: "完成关键事项确认", deliverable: "确认记录和后续变更依据" }
+          { flow: "确认记录", milestone: "完成关键事项确认", deliverable: "确认记录和后续变更依据" }
         ],
         risk: {
           title: worry ? "用户当前顾虑" : "最大偏航风险",

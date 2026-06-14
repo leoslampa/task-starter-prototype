@@ -1,14 +1,14 @@
-# 一句话任务启动助手
+# 一句话任务问法助手
 
-[English](#task-starter-assistant)
+[English](#task-question-helper)
 
-一个面向项目负责人的静态网页工具，用于把一句模糊任务快速转成任务启动小报告。
+一个面向项目负责人的静态网页工具，用于拆解一句话任务，并生成更好开口的关键问法。
 
-核心流程：
+核心输出：
 
-- 三思：形成项目负责人当前理解、任务边界、偏航风险、任务拆解。
-- 慎问：生成 3-5 个关键待确认事项、询问对象和建议问法。
-- 留痕：记录原始任务原话和待确认事项。
+- 任务拆解：梳理初步边界、交付方向、关键里程碑和风险。
+- 优先问法：生成不超过 5 个关键问题，并给出更容易被回答的问法。
+- 轻量提醒：提示用户记得保留必要沟通记录。
 
 ## 试用方式
 
@@ -75,17 +75,17 @@
 
 ---
 
-# Task Starter Assistant
+# Task Question Helper
 
-[中文](#一句话任务启动助手)
+[中文](#一句话任务问法助手)
 
-Task Starter Assistant is a static web tool for project owners who receive vague or one-sentence assignments. It helps turn unclear tasks into an initial project kickoff report.
+Task Question Helper is a static web tool for project owners who receive vague or one-sentence assignments. It breaks down the task and generates clearer, easier-to-ask questions.
 
-Core workflow:
+Core outputs:
 
-- Think: form the project owner’s current understanding, task boundaries, key risks, and task breakdown.
-- Ask carefully: generate 3-5 key confirmation items, target audiences, and suggested wording.
-- Keep records: record the original task wording and key confirmation items.
+- Task breakdown: clarify initial boundaries, deliverable direction, milestones, and risks.
+- Suggested questions: generate up to 5 key questions with wording that is easier to answer.
+- Light reminder: remind users to keep necessary communication records.
 
 ## Local Use
 
